@@ -24,6 +24,7 @@ GND / 12V / CAN_L / CAN_H
 -------------------------------------------------------------------
 
 Adapter -- Display devboard (4pin JST1.25)
+
 CAN tranceiver VCC -- 3.3V
 
 CAN tranceiver GND -- GND
