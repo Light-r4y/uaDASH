@@ -42,7 +42,17 @@ Power module MP1584 Vout -- 5V
 Power module MP1584 GND -- GND
 
 -------------------------------------------------------------------
+
+Build settings Adruino
+
+(maybe for best perfomance compile with -O2/O3 flag)
+
+![build_settings](https://github.com/Light-r4y/dash5_esp32s3/blob/main/img/adruino_settings.jpg)
+
 -------------------------------------------------------------------
+
+Dashboard interface:
+
 ![dashboard](https://github.com/Light-r4y/dash5_esp32s3/blob/main/img/4.png)
 
 
