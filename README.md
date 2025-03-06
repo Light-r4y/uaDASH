@@ -43,7 +43,7 @@ Power module MP1584 GND -- GND
 
 -------------------------------------------------------------------
 
-Build settings Adruino
+Build settings Arduino IDE
 
 (maybe for best perfomance compile with -O2/O3 flag)
 
