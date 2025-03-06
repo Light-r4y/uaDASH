@@ -47,6 +47,12 @@ Build settings Adruino
 
 (maybe for best perfomance compile with -O2/O3 flag)
 
+Required library:
+
+- LVGL v8 (grafic lib)
+
+- LovyanGFX (display driver)
+
 ![build_settings](https://github.com/Light-r4y/dash5_esp32s3/blob/main/img/adruino_settings.jpg)
 
 -------------------------------------------------------------------
