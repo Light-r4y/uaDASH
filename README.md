@@ -9,7 +9,7 @@ CAN tranceiver: TJA1050
 
 Power module: MP1584
 
-Screw : M3x16
+Screw : DIN 912 M3x16
 
 Heat brass insert nut: M3x5x5
 
