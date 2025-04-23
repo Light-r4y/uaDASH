@@ -33,7 +33,7 @@ public:
       cfg.pin_vsync = GPIO_NUM_41;
       cfg.pin_hsync = GPIO_NUM_39;
       cfg.pin_pclk = GPIO_NUM_42;
-      cfg.freq_write = 14000000;  // 14000000
+      cfg.freq_write = 16000000;  // 14000000 (try 15, 14 or 16 Mhz for different esp32 chip clone)
       // Configure data pins.
       cfg.pin_d0 = GPIO_NUM_8;   // B0
       cfg.pin_d1 = GPIO_NUM_3;   // B1
