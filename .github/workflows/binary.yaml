@@ -1,0 +1,40 @@
+name: dash-fw-ubuntu
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  dash-fw-ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v2
+
+      - name: Install platform
+        run: |
+          arduino-cli core update-index
+          arduino-cli lib install lvgl@8.4.0
+          arduino-cli lib install LovyanGFX@1.2.0
+          arduino-cli core install esp32:esp32
+
+      - name: Compile Sketch
+        working-directory: firmware
+        run: arduino-cli compile -b esp32:esp32:esp32s3:UploadSpeed=115200,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi firmware.ino -e -v
+
+      - name: Looking at folder
+        working-directory: firmware
+        run: |
+          ls -l
+          ls -l build
+          ls -l build/esp32.esp32.esp32s3
+
+      - name: Upload .bin
+        uses: actions/upload-artifact@v4
+        with:
+          path: "firmware/build/*"
+
