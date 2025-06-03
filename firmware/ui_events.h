@@ -10,7 +10,8 @@
 extern "C" {
 #endif
 
-
+void upBrightness(lv_event_t * e);
+void downBribrightness(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/
