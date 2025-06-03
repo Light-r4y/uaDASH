@@ -25,3 +25,8 @@ jobs:
       - name: Compile Sketch
         working-directory: firmware
         run: arduino-cli compile -b esp32:esp32:esp32s3:UploadSpeed=115200,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi firmware.ino -e -v
+
+      - name: Compile Sketch
+        working-directory: firmware
+        run: |
+          ls -l
