@@ -1,4 +1,4 @@
-name: dash-fw
+name: dash-fw-ubuntu
 
 on:
   push:
@@ -26,7 +26,15 @@ jobs:
         working-directory: firmware
         run: arduino-cli compile -b esp32:esp32:esp32s3:UploadSpeed=115200,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi firmware.ino -e -v
 
-      - name: Compile Sketch
+      - name: Looking at folder
         working-directory: firmware
         run: |
           ls -l
+          ls -l build
+          ls -l build/esp32.esp32.esp32s3
+
+      - name: Upload .bin
+        uses: actions/upload-artifact@v4
+        with:
+          path: "firmware/build/*"
+
