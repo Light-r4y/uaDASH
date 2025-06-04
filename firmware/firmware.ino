@@ -556,9 +556,20 @@ void loop(void) {
   vTaskDelay(pdMS_TO_TICKS(5));
 }
 
-/* void tickerUi(void *pvParameters) {
-  while (1) {
-    lv_timer_handler();
-    vTaskDelay(pdMS_TO_TICKS(5));
-  }
-} */
+void benchIGN1(lv_event_t * e){}
+void benchIGN2(lv_event_t * e){}
+void benchIGN3(lv_event_t * e){}
+void benchIGN4(lv_event_t * e){}
+void benchIGN5(lv_event_t * e){}
+void benchIGN6(lv_event_t * e){}
+void benchIGN7(lv_event_t * e){}
+void benchIGN8(lv_event_t * e){}
+void benchINJ1(lv_event_t * e){}
+void benchINJ2(lv_event_t * e){}
+void benchINJ3(lv_event_t * e){}
+void benchINJ4(lv_event_t * e){}
+void benchINJ5(lv_event_t * e){}
+void benchINJ6(lv_event_t * e){}
+void benchINJ7(lv_event_t * e){}
+void benchINJ8(lv_event_t * e){}
+void StartStop(lv_event_t * e){}
