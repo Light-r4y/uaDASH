@@ -2,121 +2,20 @@
 
 #include "lvgl.h"
 #include "lv_conf.h"
-// #include <examples/lv_examples.h>
-// #include <demos/lv_demos.h>
 #include "ui.h"
+#include "display_config.h"
+#include "display_driver.h"
+#include <Ticker.h>
+#include "driver/twai.h"
+#include "can_communication.h"
 
 static SemaphoreHandle_t dataMutex;
 static SemaphoreHandle_t uiMutex;
 
-#define LGFX_USE_V1
-#include <LovyanGFX.hpp>
-#include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>
-#include <lgfx/v1/platforms/esp32s3/Bus_RGB.hpp>
-
-/*******************************************************************************/
-// Dislay driver config
-class LGFX : public lgfx::LGFX_Device {
-
-  lgfx::Bus_RGB _bus_instance;
-  lgfx::Touch_GT911 _touch_instance;
-  lgfx::Panel_RGB _panel_instance;
-
-public:
-  LGFX(void) {
-    {
-      auto cfg = _bus_instance.config();
-      cfg.panel = &_panel_instance;
-
-      // Configure sync and clock pins.
-      cfg.pin_henable = GPIO_NUM_40;
-      cfg.pin_vsync = GPIO_NUM_41;
-      cfg.pin_hsync = GPIO_NUM_39;
-      cfg.pin_pclk = GPIO_NUM_42;
-      cfg.freq_write = 16000000;  // 14000000 (try 15, 14 or 16 Mhz for different esp32 chip clone)
-      // Configure data pins.
-      cfg.pin_d0 = GPIO_NUM_8;   // B0
-      cfg.pin_d1 = GPIO_NUM_3;   // B1
-      cfg.pin_d2 = GPIO_NUM_46;  // B2
-      cfg.pin_d3 = GPIO_NUM_9;   // B3
-      cfg.pin_d4 = GPIO_NUM_1;   // B4
-
-      cfg.pin_d5 = GPIO_NUM_5;   // G0
-      cfg.pin_d6 = GPIO_NUM_6;   // G1
-      cfg.pin_d7 = GPIO_NUM_7;   // G2
-      cfg.pin_d8 = GPIO_NUM_15;  // G3
-      cfg.pin_d9 = GPIO_NUM_16;  // G4
-      cfg.pin_d10 = GPIO_NUM_4;  // G5
-
-      cfg.pin_d11 = GPIO_NUM_45;  // R0
-      cfg.pin_d12 = GPIO_NUM_48;  // R1
-      cfg.pin_d13 = GPIO_NUM_47;  // R2
-      cfg.pin_d14 = GPIO_NUM_21;  // R3
-      cfg.pin_d15 = GPIO_NUM_14;  // R4
-
-      // Configure timing parameters for horizontal and vertical sync.
-      cfg.hsync_polarity = 0;
-      cfg.hsync_front_porch = 8;  //8;
-      cfg.hsync_pulse_width = 4;  //4;
-      cfg.hsync_back_porch = 8;   //8;
-
-      cfg.vsync_polarity = 0;
-      cfg.vsync_front_porch = 8;  //8;
-      cfg.vsync_pulse_width = 4;  //4;
-      cfg.vsync_back_porch = 8;   //8;
-
-      // Configure polarity for clock and data transmission.
-      cfg.pclk_active_neg = 1;
-      cfg.de_idle_high = 1;    // 0
-      cfg.pclk_idle_high = 1;  // 0
-
-      _bus_instance.config(cfg);               
-      _panel_instance.setBus(&_bus_instance);  
-    }
-
-    {                                       
-      auto cfg = _panel_instance.config();  
-      cfg.memory_width = 800;
-      cfg.memory_height = 480;
-      cfg.panel_width = 800;
-      cfg.panel_height = 480;
-      cfg.offset_x = 0;
-      cfg.offset_y = 0;
-      // cfg.offset_rotation = 0;
-      // cfg.dummy_read_pixel = 16;
-      // cfg.dummy_read_bits = 1;
-      // cfg.readable = false;  //true
-      // cfg.invert = false;
-      // cfg.rgb_order = false;
-      // cfg.dlen_16bit = true;   // false
-      // cfg.bus_shared = false;  // true
-      _panel_instance.config(cfg);
-    }
-    {
-      auto cfg = _touch_instance.config();
-      cfg.x_min = 0;
-      cfg.x_max = 799;
-      cfg.y_min = 0;
-      cfg.y_max = 479;
-      cfg.pin_int = GPIO_NUM_NC;
-      cfg.pin_rst = GPIO_NUM_38;
-      cfg.bus_shared = false;
-      cfg.offset_rotation = 0;
-      cfg.i2c_port = 1;           
-      cfg.pin_sda = GPIO_NUM_19;
-      cfg.pin_scl = GPIO_NUM_20;
-      cfg.freq = 400000;
-
-      _touch_instance.config(cfg);
-      _panel_instance.setTouch(&_touch_instance);
-    }
-
-    setPanel(&_panel_instance);  
-  }
-};
 
 static LGFX display;
 
+// LVGL callbacks
 void disp_flush_callback(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *px_map) {
   uint32_t w = (area->x2 - area->x1 + 1);
   uint32_t h = (area->y2 - area->y1 + 1);
@@ -124,9 +23,7 @@ void disp_flush_callback(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t 
   display.startWrite();
   display.setAddrWindow(area->x1, area->y1, w, h);
   display.pushPixelsDMA((uint16_t *)px_map, w * h, true);
-  // display.writePixels((uint16_t *)px_map, w * h, true);
   display.endWrite();
-  // display.pushImageDMA(area->x1, area->y1, w, h, (lgfx::swap565_t *)&px_map->full);
 
   lv_disp_flush_ready(disp);
 }
@@ -142,195 +39,12 @@ void touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
 }
 
 /*******************************************************************************/
-// Widget updaters
-#include <Ticker.h>
-#define PERIOD_FAST_MS 20
-#define PERIOD_MID_MS 200
-#define PERIOD_SLOW_MS 800
-
+// UI Widget updaters
 Ticker updateUiFast;
 Ticker updateUiMid;
 Ticker updateUiSlow;
 
-typedef struct struct_message {
-  int rpm;
-  int speed;
-  int clt;
-  int iat;
-  float afr;
-  float Vbat;
-  int fuelLevel;
-  float map;
-  float oilPress;
-  float fuelPress;
-  bool mainRelay;
-  bool fuelPump;
-  bool fan1;
-  bool fan2;
-} struct_message;
-
-volatile static struct_message myData;
-volatile static struct_message old_myData;
-
-static void fastUpdate() {
-  // void fastUpdate(void *pvParameters){
-  //   while (1) {
-  if (xSemaphoreTake(dataMutex, portMAX_DELAY) == pdTRUE) {
-#ifdef DEBUG
-    Serial.println("fastUpdate");
-#endif
-    if (xSemaphoreTake(uiMutex, portMAX_DELAY) == pdTRUE) {
-      // RPM
-      if (myData.rpm != old_myData.rpm) {
-        int val = myData.rpm / 10;
-        lv_bar_set_value(ui_rpmBar0, val, LV_ANIM_OFF);
-        if (val > 600) {
-          lv_obj_set_style_bg_color(ui_rpmBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        } else {
-          lv_obj_set_style_bg_color(ui_rpmBar0, lv_color_hex(0xE0FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        }
-        lv_label_set_text_fmt(ui_rpmVal0, "%d0", val);
-        old_myData.rpm = myData.rpm;
-      }
-      // MAP
-      if (myData.map != old_myData.map) {
-        lv_bar_set_value(ui_mapBar0, myData.map, LV_ANIM_OFF);
-        lv_label_set_text_fmt(ui_mapVal0, "%.0f", myData.map);
-        old_myData.map = myData.map;
-      }
-      // AFR
-      if (myData.afr != old_myData.afr) {
-        int l_bar = myData.afr * 10 - 150;
-        lv_bar_set_value(ui_afrBar0, l_bar, LV_ANIM_OFF);
-        lv_label_set_text_fmt(ui_afrVal0, "%0.1f", myData.afr);
-
-        if ((l_bar > 10) || (l_bar < -25)) {
-          lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        } else if (l_bar > 0) {
-          lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0x00FFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        } else {
-          lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0xE0FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        }
-        old_myData.afr = myData.afr;
-      }
-      xSemaphoreGive(uiMutex);
-    }
-    xSemaphoreGive(dataMutex);
-  }
-  //   vTaskDelay(pdMS_TO_TICKS(PERIOD_FAST_MS));
-  // }
-}
-
-static void midUpdate() {
-  // void midUpdate(void *pvParameters) {
-  // while (1) {
-  if (xSemaphoreTake(dataMutex, portMAX_DELAY) == pdTRUE) {
-#ifdef DEBUG
-    Serial.println("midUpdate");
-#endif
-    if (xSemaphoreTake(uiMutex, portMAX_DELAY) == pdTRUE) {
-      // VSS
-      if (myData.speed != old_myData.speed) {
-        lv_label_set_text_fmt(ui_speedVal0, "%d", myData.speed);
-        old_myData.speed = myData.speed;
-      }
-      // OIL Press
-      if (myData.oilPress != old_myData.oilPress) {
-        lv_bar_set_value(ui_oilPressBar0, myData.oilPress, LV_ANIM_ON);
-        lv_label_set_text_fmt(ui_oilPressVal0, "%.1f", myData.oilPress / 100);
-        if (myData.oilPress > 180) {
-          lv_obj_set_style_bg_color(ui_oilPressBar0, lv_color_hex(0xE6FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        } else {
-          lv_obj_set_style_bg_color(ui_oilPressBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        }
-        old_myData.oilPress = myData.oilPress;
-      }
-      // Fuel Press
-      if (myData.fuelPress != old_myData.fuelPress) {
-        lv_bar_set_value(ui_fuelPressBar0, myData.fuelPress, LV_ANIM_ON);  ///set low press
-        lv_label_set_text_fmt(ui_fuelPressVal0, "%.1f", myData.fuelPress / 100);
-        if (myData.fuelPress > 270) {
-          lv_obj_set_style_bg_color(ui_fuelPressBar0, lv_color_hex(0xE6FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        } else {
-          lv_obj_set_style_bg_color(ui_fuelPressBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        }
-        old_myData.fuelPress = myData.fuelPress;
-      }
-      xSemaphoreGive(uiMutex);
-    }
-    xSemaphoreGive(dataMutex);
-  }
-  //   vTaskDelay(pdMS_TO_TICKS(PERIOD_MID_MS));
-  // }
-}
-
-static void slowUpdate() {
-  // void slowUpdate(void *pvParameters) {
-  // while (1) {
-  if (xSemaphoreTake(dataMutex, portMAX_DELAY) == pdTRUE) {
-#ifdef DEBUG
-    Serial.println("slowUpdate");
-#endif
-    if (xSemaphoreTake(uiMutex, portMAX_DELAY) == pdTRUE) {
-      // CLT
-      if (myData.clt != old_myData.clt) {
-        lv_bar_set_value(ui_cltBar0, myData.clt, LV_ANIM_ON);
-        lv_label_set_text_fmt(ui_cltVal0, "%d", myData.clt);
-        if (myData.clt < 102) {
-          lv_obj_set_style_bg_color(ui_cltBar0, lv_color_hex(0xE6FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        } else {
-          lv_obj_set_style_bg_color(ui_cltBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        }
-        old_myData.clt = myData.clt;
-      }
-      // IAT
-      if (myData.iat != old_myData.iat) {
-        lv_bar_set_value(ui_iatBar0, myData.iat, LV_ANIM_ON);
-        lv_label_set_text_fmt(ui_iatVal0, "%d", myData.iat);
-        old_myData.iat = myData.iat;
-      }
-      // Vbat
-      if (myData.Vbat != old_myData.Vbat) {
-        lv_bar_set_value(ui_vBattBar0, myData.Vbat * 10, LV_ANIM_ON);
-        lv_label_set_text_fmt(ui_vBattVal0, "%0.1f", myData.Vbat);
-        if (myData.Vbat < 12) {
-          lv_obj_set_style_bg_color(ui_vBattBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        } else if (myData.Vbat > 15) {
-          lv_obj_set_style_bg_color(ui_vBattBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        } else {
-          lv_obj_set_style_bg_color(ui_vBattBar0, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        }
-        old_myData.Vbat = myData.Vbat;
-      }
-      // Fuel level
-      if (myData.fuelLevel != old_myData.fuelLevel) {
-        lv_bar_set_value(ui_fuelLevelBar0, myData.fuelLevel, LV_ANIM_ON);
-        lv_label_set_text_fmt(ui_fuelLevelVal0, "%d", myData.fuelLevel);
-        if (myData.fuelLevel > 15) {
-          lv_obj_set_style_bg_color(ui_fuelLevelBar0, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        } else {
-          lv_obj_set_style_bg_color(ui_fuelLevelBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        }
-        old_myData.fuelLevel = myData.fuelLevel;
-      }
-      xSemaphoreGive(uiMutex);
-    }
-    xSemaphoreGive(dataMutex);
-  }
-  // vTaskDelay(pdMS_TO_TICKS(PERIOD_SLOW_MS));
-  // }
-}
-
-/*******************************************************************************/
 //CAN Receiver
-#include "driver/twai.h"
-// Pins used to connect to CAN bus transceiver:
-#define RX_PIN 18
-#define TX_PIN 17
-
-// Interval:
-#define POLLING_RATE_MS 50
-
 void TaskCANReceiver(void *pvParameters) {
   twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t)TX_PIN, (gpio_num_t)RX_PIN, TWAI_MODE_NORMAL);  //TWAI_MODE_LISTEN_ONLY);
   twai_timing_config_t t_config = TWAI_TIMING_CONFIG_500KBITS();
@@ -457,8 +171,143 @@ void TaskCANReceiver(void *pvParameters) {
   }
 }
 
-/*******************************************************************************/
+// Widget updaters
+static void fastUpdate() {
+  if (xSemaphoreTake(dataMutex, portMAX_DELAY) == pdTRUE) {
+#ifdef DEBUG
+    Serial.println("fastUpdate");
+#endif
+    if (xSemaphoreTake(uiMutex, portMAX_DELAY) == pdTRUE) {
+      // RPM
+      if (myData.rpm != old_myData.rpm) {
+        int val = myData.rpm / 10;
+        lv_bar_set_value(ui_rpmBar0, val, LV_ANIM_OFF);
+        if (val > 600) {
+          lv_obj_set_style_bg_color(ui_rpmBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        } else {
+          lv_obj_set_style_bg_color(ui_rpmBar0, lv_color_hex(0xE0FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
+        lv_label_set_text_fmt(ui_rpmVal0, "%d0", val);
+        old_myData.rpm = myData.rpm;
+      }
+      // MAP
+      if (myData.map != old_myData.map) {
+        lv_bar_set_value(ui_mapBar0, myData.map, LV_ANIM_OFF);
+        lv_label_set_text_fmt(ui_mapVal0, "%.0f", myData.map);
+        old_myData.map = myData.map;
+      }
+      // AFR
+      if (myData.afr != old_myData.afr) {
+        int l_bar = myData.afr * 10 - 150;
+        lv_bar_set_value(ui_afrBar0, l_bar, LV_ANIM_OFF);
+        lv_label_set_text_fmt(ui_afrVal0, "%0.1f", myData.afr);
 
+        if ((l_bar > 10) || (l_bar < -25)) {
+          lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        } else if (l_bar > 0) {
+          lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0x00FFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        } else {
+          lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0xE0FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
+        old_myData.afr = myData.afr;
+      }
+      xSemaphoreGive(uiMutex);
+    }
+    xSemaphoreGive(dataMutex);
+  }
+}
+
+static void midUpdate() {
+  if (xSemaphoreTake(dataMutex, portMAX_DELAY) == pdTRUE) {
+#ifdef DEBUG
+    Serial.println("midUpdate");
+#endif
+    if (xSemaphoreTake(uiMutex, portMAX_DELAY) == pdTRUE) {
+      // VSS
+      if (myData.speed != old_myData.speed) {
+        lv_label_set_text_fmt(ui_speedVal0, "%d", myData.speed);
+        old_myData.speed = myData.speed;
+      }
+      // OIL Press
+      if (myData.oilPress != old_myData.oilPress) {
+        lv_bar_set_value(ui_oilPressBar0, myData.oilPress, LV_ANIM_ON);
+        lv_label_set_text_fmt(ui_oilPressVal0, "%.1f", myData.oilPress / 100);
+        if (myData.oilPress > 180) {
+          lv_obj_set_style_bg_color(ui_oilPressBar0, lv_color_hex(0xE6FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        } else {
+          lv_obj_set_style_bg_color(ui_oilPressBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
+        old_myData.oilPress = myData.oilPress;
+      }
+      // Fuel Press
+      if (myData.fuelPress != old_myData.fuelPress) {
+        lv_bar_set_value(ui_fuelPressBar0, myData.fuelPress, LV_ANIM_ON);  ///set low press
+        lv_label_set_text_fmt(ui_fuelPressVal0, "%.1f", myData.fuelPress / 100);
+        if (myData.fuelPress > 270) {
+          lv_obj_set_style_bg_color(ui_fuelPressBar0, lv_color_hex(0xE6FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        } else {
+          lv_obj_set_style_bg_color(ui_fuelPressBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
+        old_myData.fuelPress = myData.fuelPress;
+      }
+      xSemaphoreGive(uiMutex);
+    }
+    xSemaphoreGive(dataMutex);
+  }
+}
+
+static void slowUpdate() {
+  if (xSemaphoreTake(dataMutex, portMAX_DELAY) == pdTRUE) {
+#ifdef DEBUG
+    Serial.println("slowUpdate");
+#endif
+    if (xSemaphoreTake(uiMutex, portMAX_DELAY) == pdTRUE) {
+      // CLT
+      if (myData.clt != old_myData.clt) {
+        lv_bar_set_value(ui_cltBar0, myData.clt, LV_ANIM_ON);
+        lv_label_set_text_fmt(ui_cltVal0, "%d", myData.clt);
+        if (myData.clt < 102) {
+          lv_obj_set_style_bg_color(ui_cltBar0, lv_color_hex(0xE6FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        } else {
+          lv_obj_set_style_bg_color(ui_cltBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
+        old_myData.clt = myData.clt;
+      }
+      // IAT
+      if (myData.iat != old_myData.iat) {
+        lv_bar_set_value(ui_iatBar0, myData.iat, LV_ANIM_ON);
+        lv_label_set_text_fmt(ui_iatVal0, "%d", myData.iat);
+        old_myData.iat = myData.iat;
+      }
+      // Vbat
+      if (myData.Vbat != old_myData.Vbat) {
+        lv_bar_set_value(ui_vBattBar0, myData.Vbat * 10, LV_ANIM_ON);
+        lv_label_set_text_fmt(ui_vBattVal0, "%0.1f", myData.Vbat);
+        if (myData.Vbat < 12) {
+          lv_obj_set_style_bg_color(ui_vBattBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        } else if (myData.Vbat > 15) {
+          lv_obj_set_style_bg_color(ui_vBattBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        } else {
+          lv_obj_set_style_bg_color(ui_vBattBar0, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
+        old_myData.Vbat = myData.Vbat;
+      }
+      // Fuel level
+      if (myData.fuelLevel != old_myData.fuelLevel) {
+        lv_bar_set_value(ui_fuelLevelBar0, myData.fuelLevel, LV_ANIM_ON);
+        lv_label_set_text_fmt(ui_fuelLevelVal0, "%d", myData.fuelLevel);
+        if (myData.fuelLevel > 15) {
+          lv_obj_set_style_bg_color(ui_fuelLevelBar0, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        } else {
+          lv_obj_set_style_bg_color(ui_fuelLevelBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
+        old_myData.fuelLevel = myData.fuelLevel;
+      }
+      xSemaphoreGive(uiMutex);
+    }
+    xSemaphoreGive(dataMutex);
+  }
+}
 /*******************************************************************************/
 // Initial setup
 static int brightnessVal;
@@ -473,18 +322,9 @@ void setBrightness(int val) {
       brightnessVal = val;
     }
   }
-  ledcWrite(GPIO_NUM_2, brightnessVal);
+  ledcWrite(LCD_PIN_BACKLIGHT, brightnessVal);
 }
 
-void upBrightness(lv_event_t *e) {
-  setBrightness(brightnessVal + 40);
-}
-void downBribrightness(lv_event_t *e) {
-  setBrightness(brightnessVal - 40);
-}
-
-const uint32_t screenWidth = 800;
-const uint32_t screenHeight = 480;
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t *disp_draw_buf1;
 static lv_color_t *disp_draw_buf2;
@@ -496,8 +336,8 @@ void setup(void) {
   Serial.begin(115200);
   Serial.println("Setup starting");
 #endif
-  ledcAttach(GPIO_NUM_2, 600, 8);
-  ledcWrite(GPIO_NUM_2, brightnessVal);
+  ledcAttach(LCD_PIN_BACKLIGHT, 600, 8);
+  ledcWrite(LCD_PIN_BACKLIGHT, brightnessVal);
 
   display.init();
   display.fillScreen(TFT_BLACK);
@@ -505,17 +345,16 @@ void setup(void) {
 
   lv_init();
 
-  disp_draw_buf1 = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * screenWidth * screenHeight / 10, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
-  disp_draw_buf2 = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * screenWidth * screenHeight / 10, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
-  // disp_draw_buf2 = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * screenWidth * screenHeight / 10, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+  disp_draw_buf1 = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * LCD_WIDTH * LCD_HEGHT / 10, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+  disp_draw_buf2 = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * LCD_WIDTH * LCD_HEGHT / 10, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
 
-  lv_disp_draw_buf_init(&draw_buf, disp_draw_buf1, disp_draw_buf2, screenWidth * screenHeight / 10);
+  lv_disp_draw_buf_init(&draw_buf, disp_draw_buf1, disp_draw_buf2, LCD_WIDTH * LCD_HEGHT / 10);
 
   /* Initialize the display */
   lv_disp_drv_init(&disp_drv);
   /* Change the following line to your display resolution */
-  disp_drv.hor_res = screenWidth;
-  disp_drv.ver_res = screenHeight;
+  disp_drv.hor_res = LCD_WIDTH;
+  disp_drv.ver_res = LCD_HEGHT;
   disp_drv.flush_cb = disp_flush_callback;
   disp_drv.draw_buf = &draw_buf;
   lv_disp_drv_register(&disp_drv);
@@ -526,19 +365,9 @@ void setup(void) {
   indev_drv.read_cb = &touchpad_read;
   lv_indev_drv_register(&indev_drv);
 
-  // lv_demo_benchmark();
-  // lv_demo_widgets();
 
   // Crate task get data and updater
   xTaskCreatePinnedToCore(TaskCANReceiver, "TaskCANReceiver", 4 * 1024, NULL, 1, NULL, 0);
-  // xTaskCreatePinnedToCore(fastUpdate, "fastUpdate", 4 * 1024, NULL, 1, NULL, 0);
-  // xTaskCreatePinnedToCore(midUpdate, "midUpdate", 1 * 1024, NULL, 1, NULL, 0);
-  // xTaskCreatePinnedToCore(slowUpdate, "slowUpdate", 1 * 1024, NULL, 1, NULL, 0);
-  // xTaskCreatePinnedToCore(tickerUi, "tickerUi", 4 * 1024, NULL, 1, NULL, 0);
-
-  // updateUiFast.attach_ms(PERIOD_FAST_MS, fastUpdate);
-  // updateUiMid.attach_ms(PERIOD_MID_MS, midUpdate);
-  // updateUiSlow.attach_ms(PERIOD_SLOW_MS, slowUpdate);
 
   ui_init();
 
@@ -556,20 +385,26 @@ void loop(void) {
   vTaskDelay(pdMS_TO_TICKS(5));
 }
 
-void benchIGN1(lv_event_t * e){}
-void benchIGN2(lv_event_t * e){}
-void benchIGN3(lv_event_t * e){}
-void benchIGN4(lv_event_t * e){}
-void benchIGN5(lv_event_t * e){}
-void benchIGN6(lv_event_t * e){}
-void benchIGN7(lv_event_t * e){}
-void benchIGN8(lv_event_t * e){}
-void benchINJ1(lv_event_t * e){}
-void benchINJ2(lv_event_t * e){}
-void benchINJ3(lv_event_t * e){}
-void benchINJ4(lv_event_t * e){}
-void benchINJ5(lv_event_t * e){}
-void benchINJ6(lv_event_t * e){}
-void benchINJ7(lv_event_t * e){}
-void benchINJ8(lv_event_t * e){}
-void StartStop(lv_event_t * e){}
+void upBrightness(lv_event_t *e) {
+  setBrightness(brightnessVal + 40);
+}
+void downBribrightness(lv_event_t *e) {
+  setBrightness(brightnessVal - 40);
+}
+void benchIGN1(lv_event_t *e) {}
+void benchIGN2(lv_event_t *e) {}
+void benchIGN3(lv_event_t *e) {}
+void benchIGN4(lv_event_t *e) {}
+void benchIGN5(lv_event_t *e) {}
+void benchIGN6(lv_event_t *e) {}
+void benchIGN7(lv_event_t *e) {}
+void benchIGN8(lv_event_t *e) {}
+void benchINJ1(lv_event_t *e) {}
+void benchINJ2(lv_event_t *e) {}
+void benchINJ3(lv_event_t *e) {}
+void benchINJ4(lv_event_t *e) {}
+void benchINJ5(lv_event_t *e) {}
+void benchINJ6(lv_event_t *e) {}
+void benchINJ7(lv_event_t *e) {}
+void benchINJ8(lv_event_t *e) {}
+void StartStop(lv_event_t *e) {}
