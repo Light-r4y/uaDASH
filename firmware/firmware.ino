@@ -9,6 +9,10 @@
 #include "driver/twai.h"
 #include "can_communication.h"
 
+#if defined(WAVESHARE_S3_LCD7) || defined(WAVESHARE_S3_LCD5)
+#include <ESP_IOExpander_Library.h>
+#endif
+
 static SemaphoreHandle_t dataMutex;
 static SemaphoreHandle_t uiMutex;
 
@@ -313,6 +317,7 @@ static void slowUpdate() {
 static int brightnessVal;
 
 void setBrightness(int val) {
+#ifdef JC8048W550C
   if (val <= 55) {
     brightnessVal = 55;
   } else {
@@ -323,6 +328,7 @@ void setBrightness(int val) {
     }
   }
   ledcWrite(LCD_PIN_BACKLIGHT, brightnessVal);
+#endif
 }
 
 static lv_disp_draw_buf_t draw_buf;
@@ -336,8 +342,25 @@ void setup(void) {
   Serial.begin(115200);
   Serial.println("Setup starting");
 #endif
+
+#ifdef JC8048W550C
   ledcAttach(LCD_PIN_BACKLIGHT, 600, 8);
   ledcWrite(LCD_PIN_BACKLIGHT, brightnessVal);
+#elif defined(WAVESHARE_S3_LCD7) || defined(WAVESHARE_S3_LCD5)
+  pinMode(4, OUTPUT);
+  /* Initialize IO expander */
+  ESP_IOExpander_CH422G *expander = new ESP_IOExpander_CH422G(
+    (i2c_port_t)I2C_NUM_0 /*I2C_MASTER_NUM*/, ESP_IO_EXPANDER_I2C_CH422G_ADDRESS,
+    9 /*I2C_MASTER_SCL_IO*/, 8 /*I2C_MASTER_SDA_IO*/);
+
+  expander->init();
+  expander->begin();
+  expander->enableAllIO_Output();
+  expander->digitalWrite(1 /*TP_RST*/, HIGH);
+  expander->digitalWrite(3 /*LCD_RST*/, HIGH);
+  expander->digitalWrite(2 /*LCD_BL*/, HIGH);
+  delay(100);
+#endif
 
   display.init();
   display.fillScreen(TFT_BLACK);
