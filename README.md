@@ -3,7 +3,7 @@ rusEFI 5inch display dashboard
 
 -------------------------------------------------------------------
 
-Display devboard: JC8048W550C
+Display devboard: GUITION JC8048W550C
 
 CAN tranceiver: TJA1050
 
@@ -23,6 +23,20 @@ GND / 12V / CAN_L / CAN_H
 
 -------------------------------------------------------------------
 
+P1 Power
+
+(use 4pin JST1.25 connector near the USB)
+
+Power module MP1584 Vout -- 5V
+
+RX/TX unused
+
+Power module MP1584 GND -- GND
+
+-------------------------------------------------------------------
+
+P4 CANbus 
+
 Adapter -- Display devboard (4pin JST1.25)
 
 CAN tranceiver VCC -- 3.3V
@@ -35,21 +49,13 @@ CAN tranceiver RX -- PIN_18
 
 -------------------------------------------------------------------
 
-(use 4pin JST1.25 connector near the USB)
-
-Power module MP1584 Vout -- 5V
-
-Power module MP1584 GND -- GND
-
--------------------------------------------------------------------
-
 Build settings Arduino IDE
 
-(maybe for best perfomance compile with -O2/O3 flag)
+(maybe for best performance compile with -O2/O3 flag)
 
 Required library:
 
-- LVGL v8 (grafic lib)
+- LVGL v8 (graphic lib)
 
 - LovyanGFX (display driver)
 
