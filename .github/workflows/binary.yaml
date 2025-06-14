@@ -15,6 +15,7 @@ jobs:
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v2
 
+      # see also 0-setup.bat
       - name: Install platform
         run: |
           arduino-cli core update-index
