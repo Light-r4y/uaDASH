@@ -29,6 +29,9 @@ void benchINJ6(lv_event_t * e);
 void benchINJ7(lv_event_t * e);
 void benchINJ8(lv_event_t * e);
 void StartStop(lv_event_t * e);
+void benchFuelPump(lv_event_t * e);
+void benchFan2(lv_event_t * e);
+void benchFan1(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

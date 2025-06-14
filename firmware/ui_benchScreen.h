@@ -71,6 +71,15 @@ extern lv_obj_t * ui_labelBenchIhj;
 extern void ui_event_Start(lv_event_t * e);
 extern lv_obj_t * ui_Start;
 extern lv_obj_t * ui_Label8;
+extern void ui_event_fuelPump(lv_event_t * e);
+extern lv_obj_t * ui_fuelPump;
+extern lv_obj_t * ui_labelFuelPump;
+extern void ui_event_fan2(lv_event_t * e);
+extern lv_obj_t * ui_fan2;
+extern lv_obj_t * ui_labelFan2;
+extern void ui_event_fan1(lv_event_t * e);
+extern lv_obj_t * ui_fan1;
+extern lv_obj_t * ui_labelFan1;
 // CUSTOM VARIABLES
 extern lv_obj_t * uic_IGN1;
 

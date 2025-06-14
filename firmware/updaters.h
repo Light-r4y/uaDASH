@@ -1,12 +1,10 @@
-#ifndef CAN_COMMUNICATION_H
-#define CAN_COMMUNICATION_H
+#pragma once
 
-// Pins used to connect to CAN bus transceiver:
-#define RX_PIN GPIO_NUM_18  // 18
-#define TX_PIN GPIO_NUM_17  // 17
-
-// CAN Interval:
-#define POLLING_RATE_MS 50
+#include "ui.h"
+#include "config.h"
+#include "twai_lib.h"
+#include "mutex.h"
+#include <Ticker.h>
 
 // Updaters tikers
 #define PERIOD_FAST_MS 20
@@ -18,9 +16,10 @@ typedef struct struct_message {
   int speed;
   int clt;
   int iat;
+  int oilTemp;
+  int fuelLevel;
   float afr;
   float Vbat;
-  int fuelLevel;
   float map;
   float oilPress;
   float fuelPress;
@@ -33,4 +32,16 @@ typedef struct struct_message {
 volatile static struct_message myData;
 volatile static struct_message old_myData;
 
-#endif  // HEADER
+extern ESP32S3_TWAI can;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void TaskCANReceiver(void *pvParameters);
+void fastUpdate();
+void midUpdate();
+void slowUpdate();
+
+#ifdef __cplusplus
+} /*extern "C"*/
+#endif
