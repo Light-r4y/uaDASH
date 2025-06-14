@@ -5,13 +5,12 @@
 
 #include "ui.h"
 
-lv_obj_t * uic_IGN1;
 lv_obj_t * ui_benchScreen;
 lv_obj_t * ui_ContainerIGN;
 lv_obj_t * ui_IGN1;
-lv_obj_t * ui_labelIgn1;
+lv_obj_t * ui_labelIgn9;
 lv_obj_t * ui_IGN2;
-lv_obj_t * ui_labelIgn2;
+lv_obj_t * ui_labelIgn1;
 lv_obj_t * ui_IGN3;
 lv_obj_t * ui_labelIgn3;
 lv_obj_t * ui_IGN4;
@@ -52,6 +51,7 @@ lv_obj_t * ui_fan2;
 lv_obj_t * ui_labelFan2;
 lv_obj_t * ui_fan1;
 lv_obj_t * ui_labelFan1;
+lv_obj_t * ui_debugStatus;
 
 // event funtions
 void ui_event_benchScreen(lv_event_t * e)
@@ -273,14 +273,14 @@ void ui_benchScreen_screen_init(void)
     lv_obj_set_style_bg_color(ui_IGN1, lv_color_hex(0xE0FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_IGN1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_labelIgn1 = lv_label_create(ui_IGN1);
-    lv_obj_set_width(ui_labelIgn1, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_labelIgn1, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_labelIgn1, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_labelIgn1, "1");
-    lv_obj_set_style_text_color(ui_labelIgn1, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_labelIgn1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_labelIgn1, &ui_font_FontLabel, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_labelIgn9 = lv_label_create(ui_IGN1);
+    lv_obj_set_width(ui_labelIgn9, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_labelIgn9, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_labelIgn9, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_labelIgn9, "1");
+    lv_obj_set_style_text_color(ui_labelIgn9, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_labelIgn9, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_labelIgn9, &ui_font_FontLabel, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_IGN2 = lv_btn_create(ui_ContainerIGN);
     lv_obj_set_width(ui_IGN2, 120);
@@ -293,14 +293,14 @@ void ui_benchScreen_screen_init(void)
     lv_obj_set_style_bg_color(ui_IGN2, lv_color_hex(0xE0FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_IGN2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_labelIgn2 = lv_label_create(ui_IGN2);
-    lv_obj_set_width(ui_labelIgn2, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_labelIgn2, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_labelIgn2, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_labelIgn2, "2");
-    lv_obj_set_style_text_color(ui_labelIgn2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_labelIgn2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_labelIgn2, &ui_font_FontLabel, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_labelIgn1 = lv_label_create(ui_IGN2);
+    lv_obj_set_width(ui_labelIgn1, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_labelIgn1, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_labelIgn1, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_labelIgn1, "2");
+    lv_obj_set_style_text_color(ui_labelIgn1, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_labelIgn1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_labelIgn1, &ui_font_FontLabel, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_IGN3 = lv_btn_create(ui_ContainerIGN);
     lv_obj_set_width(ui_IGN3, 120);
@@ -720,6 +720,16 @@ void ui_benchScreen_screen_init(void)
     lv_obj_set_style_text_opa(ui_labelFan1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_labelFan1, &ui_font_FontLabel, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_debugStatus = lv_label_create(ui_benchScreen);
+    lv_obj_set_width(ui_debugStatus, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_debugStatus, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_debugStatus, -1);
+    lv_obj_set_y(ui_debugStatus, 119);
+    lv_obj_set_align(ui_debugStatus, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_debugStatus, "");
+    lv_obj_set_style_text_color(ui_debugStatus, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_debugStatus, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     lv_obj_add_event_cb(ui_IGN1, ui_event_IGN1, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_IGN2, ui_event_IGN2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_IGN3, ui_event_IGN3, LV_EVENT_ALL, NULL);
@@ -741,7 +751,6 @@ void ui_benchScreen_screen_init(void)
     lv_obj_add_event_cb(ui_fan2, ui_event_fan2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_fan1, ui_event_fan1, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_benchScreen, ui_event_benchScreen, LV_EVENT_ALL, NULL);
-    uic_IGN1 = ui_IGN1;
 
 }
 
@@ -752,11 +761,10 @@ void ui_benchScreen_screen_destroy(void)
     // NULL screen variables
     ui_benchScreen = NULL;
     ui_ContainerIGN = NULL;
-    uic_IGN1 = NULL;
     ui_IGN1 = NULL;
-    ui_labelIgn1 = NULL;
+    ui_labelIgn9 = NULL;
     ui_IGN2 = NULL;
-    ui_labelIgn2 = NULL;
+    ui_labelIgn1 = NULL;
     ui_IGN3 = NULL;
     ui_labelIgn3 = NULL;
     ui_IGN4 = NULL;
@@ -797,5 +805,6 @@ void ui_benchScreen_screen_destroy(void)
     ui_labelFan2 = NULL;
     ui_fan1 = NULL;
     ui_labelFan1 = NULL;
+    ui_debugStatus = NULL;
 
 }

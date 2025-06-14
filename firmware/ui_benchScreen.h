@@ -18,10 +18,10 @@ extern lv_obj_t * ui_benchScreen;
 extern lv_obj_t * ui_ContainerIGN;
 extern void ui_event_IGN1(lv_event_t * e);
 extern lv_obj_t * ui_IGN1;
-extern lv_obj_t * ui_labelIgn1;
+extern lv_obj_t * ui_labelIgn9;
 extern void ui_event_IGN2(lv_event_t * e);
 extern lv_obj_t * ui_IGN2;
-extern lv_obj_t * ui_labelIgn2;
+extern lv_obj_t * ui_labelIgn1;
 extern void ui_event_IGN3(lv_event_t * e);
 extern lv_obj_t * ui_IGN3;
 extern lv_obj_t * ui_labelIgn3;
@@ -80,8 +80,8 @@ extern lv_obj_t * ui_labelFan2;
 extern void ui_event_fan1(lv_event_t * e);
 extern lv_obj_t * ui_fan1;
 extern lv_obj_t * ui_labelFan1;
+extern lv_obj_t * ui_debugStatus;
 // CUSTOM VARIABLES
-extern lv_obj_t * uic_IGN1;
 
 #ifdef __cplusplus
 } /*extern "C"*/
