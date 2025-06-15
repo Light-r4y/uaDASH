@@ -2,8 +2,8 @@
 #define TWAI_LIB_H
 
 #include <Arduino.h>
-#include <driver/twai.h>
 #include "config.h"
+#include <driver/twai.h>
 
 // Pins used to connect to CAN bus transceiver:
 #ifdef JC8048W550C
@@ -29,8 +29,8 @@ class ESP32S3_TWAI
 {
 public:
     // Initialize TWAI controller
-    bool init(gpio_num_t txPin = CAN_TX_PIN,
-              gpio_num_t rxPin = CAN_RX_PIN,
+    bool init(gpio_num_t txPin = (gpio_num_t)CAN_TX_PIN,
+              gpio_num_t rxPin = (gpio_num_t)CAN_RX_PIN,
               twai_timing_config_t timing = CAN_BAUDRATE,
               twai_mode_t mode = TWAI_MODE,
               bool useFilter = true,

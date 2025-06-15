@@ -1,4 +1,3 @@
-// #define DEBUG
 
 #include "display_driver.h"
 #include "updaters.h"

@@ -39,7 +39,7 @@ P4 CANbus
 
 Adapter -- Display devboard (4pin JST1.25)
 
-CAN tranceiver VCC -- 3.3V
+CAN tranceiver VCC -- 3.3V !!! Note: somtetimes not working, use 5V form another place
 
 CAN tranceiver GND -- GND
 
