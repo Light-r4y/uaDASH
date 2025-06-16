@@ -13,11 +13,11 @@ Change main/bench screen use swipe left/right.
 
 Main screen:
 
-![dashboard](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/main_screen.png)
+![main_screen](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/main_screen.png)
 
 Bench test screen:
 
-![dashboard](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/bench_screen.png)
+![bench_screen](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/bench_screen.png)
 
 -------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ https://espressif.github.io/esptool-js/
 
 
 
-![dashboard](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/esp-flasher.png)
+![esp-flasher](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/esp-flasher.png)
 
 -------------------------------------------------------------------
 
