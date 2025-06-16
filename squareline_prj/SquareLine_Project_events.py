@@ -11,7 +11,15 @@ def benchIGN1(event_struct):
     return
 
 
+def benchIGN1click(event_struct):
+    return
+
+
 def benchIGN2(event_struct):
+    return
+
+
+def benchIGN2click(event_struct):
     return
 
 
@@ -71,6 +79,22 @@ def benchINJ8(event_struct):
     return
 
 
+def StartStopClick(event_struct):
+    return
+
+
 def StartStop(event_struct):
+    return
+
+
+def benchFuelPump(event_struct):
+    return
+
+
+def benchFan2(event_struct):
+    return
+
+
+def benchFan1(event_struct):
     return
 
