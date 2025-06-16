@@ -197,6 +197,9 @@
 #define TOUCH_ROTATION  0
 
 // WAVESHARE_S3_LCD5 end
+
+#else
+#error "Please choose LCD type in config.h"
 #endif
 
 
