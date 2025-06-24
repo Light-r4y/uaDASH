@@ -1,6 +1,7 @@
 #include "updaters.h"
 
 ESP32S3_TWAI can;
+Preferences preferences;
 
 void TaskCANReceiver(void *pvParameters) {
   uint32_t id;
@@ -12,18 +13,20 @@ void TaskCANReceiver(void *pvParameters) {
   Ticker updateUiMid;
   Ticker updateUiSlow;
 
+  getWarningsSet();
+  changeMapWidget = true;
+
   bool ret;
 #ifdef DEBUG
-
   Serial.println("TaskCANReceiver init");
 #endif
-  ret = can.init();
 
+  ret = can.init();
 #ifdef DEBUG
   Serial.printf("can.init : %s\n", ret ? "OK" : "FAIL");
 #endif
-  ret = can.alertConfigure();
 
+  ret = can.alertConfigure();
 #ifdef DEBUG
   Serial.printf("can.alertConfigure : %s\n", ret ? "OK" : "FAIL");
 #endif
@@ -100,7 +103,7 @@ void TaskCANReceiver(void *pvParameters) {
               break;
             case 0x204:
               myData.oilPress = (data[3] << 8 | data[2]) * 0.0333;
-              myData.oilTemp = (data[1] << 8 | data[0]) - 40;
+              myData.oilTemp = data[4] - 40;
               myData.Vbat = (data[7] << 8 | data[6]) * 0.001;
               break;
             case 0x207:
@@ -131,7 +134,7 @@ void fastUpdate() {
         } else {
           int val = myData.rpm / 10;
           lv_bar_set_value(ui_rpmBar0, val, LV_ANIM_OFF);
-          if (val > 600) {
+          if (val > warningSet.rpm) {
             lv_obj_set_style_bg_color(ui_rpmBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
           } else {
             lv_obj_set_style_bg_color(ui_rpmBar0, lv_color_hex(0xE0FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
@@ -142,8 +145,18 @@ void fastUpdate() {
       }
       // MAP
       if (myData.map != old_myData.map) {
-        lv_bar_set_value(ui_mapBar0, myData.map, LV_ANIM_OFF);
-        lv_label_set_text_fmt(ui_mapVal0, "%.0f", myData.map);
+        if (warningSet.isTurbo) {
+          float d_map = myData.map / 100;
+          if (d_map >= 0) {
+            lv_obj_set_style_bg_color(ui_mapBar0, lv_color_hex(0xE0FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+          } else {
+            lv_obj_set_style_bg_color(ui_mapBar0, lv_color_hex(0x01FF71), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+          }
+          lv_label_set_text_fmt(ui_mapVal0, "%.2f", d_map);
+        } else {
+          lv_label_set_text_fmt(ui_mapVal0, "%.0f", myData.map);
+        }
+        lv_bar_set_value(ui_mapBar0, myData.map - 100, LV_ANIM_OFF);
         old_myData.map = myData.map;
       }
       // AFR
@@ -182,7 +195,7 @@ void midUpdate() {
       if (myData.oilPress != old_myData.oilPress) {
         lv_bar_set_value(ui_oilPressBar0, myData.oilPress, LV_ANIM_ON);
         lv_label_set_text_fmt(ui_oilPressVal0, "%.1f", myData.oilPress / 100);
-        if (myData.oilPress > 180) {
+        if (myData.oilPress > warningSet.oilPress) {
           lv_obj_set_style_bg_color(ui_oilPressBar0, lv_color_hex(0xE6FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
         } else {
           lv_obj_set_style_bg_color(ui_oilPressBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
@@ -193,7 +206,7 @@ void midUpdate() {
       if (myData.fuelPress != old_myData.fuelPress) {
         lv_bar_set_value(ui_fuelPressBar0, myData.fuelPress, LV_ANIM_ON);  /// set low press
         lv_label_set_text_fmt(ui_fuelPressVal0, "%.1f", myData.fuelPress / 100);
-        if (myData.fuelPress > 270) {
+        if (myData.fuelPress > warningSet.fuelPress) {
           lv_obj_set_style_bg_color(ui_fuelPressBar0, lv_color_hex(0xE6FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
         } else {
           lv_obj_set_style_bg_color(ui_fuelPressBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
@@ -207,6 +220,29 @@ void midUpdate() {
 }
 
 void slowUpdate() {
+  if (changeMapWidget) {
+    if (warningSet.isTurbo) {
+      lv_label_set_text(ui_mapLabel1, "boost");
+      lv_bar_set_range(ui_mapBar0, -100, 300);
+      lv_label_set_text(ui_LabelMapMax, "3");
+      lv_obj_clear_flag(ui_LabelMapT0, LV_OBJ_FLAG_HIDDEN);
+      lv_label_set_text(ui_LabelMapMid, "1");
+      lv_obj_clear_flag(ui_LabelMapT2, LV_OBJ_FLAG_HIDDEN);
+      lv_label_set_text(ui_LabelMapMin, "-1");
+      lv_label_set_text_fmt(ui_mapVal0, "%.2f", myData.map / 100);
+    } else {
+      lv_label_set_text(ui_mapLabel1, "map");
+      lv_bar_set_range(ui_mapBar0, -100, 0);
+      lv_label_set_text(ui_LabelMapMax, "100");
+      lv_obj_add_flag(ui_LabelMapT0, LV_OBJ_FLAG_HIDDEN);
+      lv_label_set_text(ui_LabelMapMid, "50");
+      lv_obj_add_flag(ui_LabelMapT2, LV_OBJ_FLAG_HIDDEN);
+      lv_label_set_text(ui_LabelMapMin, "0");
+      lv_label_set_text_fmt(ui_mapVal0, "%.0f", myData.map);
+    }
+    changeMapWidget = false;
+  }
+
   if (xSemaphoreTake(dataMutex, portMAX_DELAY) == pdTRUE) {
 #ifdef DEBUG
     // Serial.println("slowUpdate");
@@ -216,7 +252,7 @@ void slowUpdate() {
       if (myData.clt != old_myData.clt) {
         lv_bar_set_value(ui_cltBar0, myData.clt, LV_ANIM_ON);
         lv_label_set_text_fmt(ui_cltVal0, "%d", myData.clt);
-        if (myData.clt < 102) {
+        if (myData.clt < warningSet.clt) {
           lv_obj_set_style_bg_color(ui_cltBar0, lv_color_hex(0xE6FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
         } else {
           lv_obj_set_style_bg_color(ui_cltBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
@@ -227,13 +263,18 @@ void slowUpdate() {
       if (myData.iat != old_myData.iat) {
         lv_bar_set_value(ui_iatBar0, myData.iat, LV_ANIM_ON);
         lv_label_set_text_fmt(ui_iatVal0, "%d", myData.iat);
+        if (myData.iat < warningSet.iat) {
+          lv_obj_set_style_bg_color(ui_iatBar0, lv_color_hex(0xE6FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        } else {
+          lv_obj_set_style_bg_color(ui_iatBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
         old_myData.iat = myData.iat;
       }
       // OIL T
       if (myData.oilTemp != old_myData.oilTemp) {
         lv_bar_set_value(ui_oilTempBar0, myData.oilTemp, LV_ANIM_ON);
         lv_label_set_text_fmt(ui_oilTempVal1, "%d", myData.oilTemp);
-        if (myData.oilTemp < 110) {
+        if (myData.oilTemp < warningSet.oilTemp) {
           lv_obj_set_style_bg_color(ui_oilTempBar0, lv_color_hex(0xE6FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
         } else {
           lv_obj_set_style_bg_color(ui_oilTempBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
@@ -242,7 +283,12 @@ void slowUpdate() {
       }
       // Vbat
       if (myData.Vbat != old_myData.Vbat) {
-        lv_label_set_text_fmt(ui_vBattVal0, "%0.1f", myData.Vbat);
+        if (myData.Vbat < warningSet.vBatt) {
+          lv_obj_set_style_text_color(ui_vBattVal0, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+        } else {
+          lv_obj_set_style_text_color(ui_vBattVal0, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+        }
+        lv_label_set_text_fmt(ui_vBattVal0, "%.1f", myData.Vbat);
         old_myData.Vbat = myData.Vbat;
       }
       // Fuel level
@@ -260,4 +306,236 @@ void slowUpdate() {
     }
     xSemaphoreGive(dataMutex);
   }
+}
+
+void getWarningsSet() {
+  preferences.begin("warn", true);
+  warningSet.rpm = preferences.getInt("rpm", DEF_WARN_RPM);
+  warningSet.iat = preferences.getInt("iat", DEF_WARN_IAT);
+  warningSet.clt = preferences.getInt("clt", DEF_WARN_CLT);
+  warningSet.oilTemp = preferences.getInt("oilT", DEF_WARN_OIL_T);
+  warningSet.oilPress = preferences.getInt("oilP", DEF_WARN_OIL_P);
+  warningSet.fuelPress = preferences.getInt("fuelP", DEF_WARN_FUEL_P);
+  warningSet.vBatt = preferences.getFloat("vBatt", DEF_WARN_VBATT);
+  warningSet.isTurbo = preferences.getBool("turbo", DEF_IS_TURBO);
+  preferences.end();
+#ifdef DEBUG
+  Serial.printf("getWarningsSet > rpm: %d, iat: %d, clt: %d, oilT: %d, oilP: %d, fuelP: %d, vB: %0.1f, isTurbo: %d\n",
+                warningSet.rpm, warningSet.iat, warningSet.clt, warningSet.oilTemp,
+                warningSet.oilPress, warningSet.fuelPress, warningSet.vBatt, warningSet.isTurbo);
+#endif
+}
+
+void updateWarningsSet() {
+#ifdef DEBUG
+  Serial.println("updateWarningsSet> start");
+#endif
+
+  preferences.begin("warn", false);
+
+  if (warningSet.rpm != preferences.getInt("rpm", DEF_WARN_RPM)) {
+    preferences.putInt("rpm", warningSet.rpm);
+#ifdef DEBUG
+    Serial.println("updateWarningsSet> warningSet.rpm");
+#endif
+  }
+  if (warningSet.iat != preferences.getInt("iat", DEF_WARN_IAT)) {
+    preferences.putInt("iat", warningSet.iat);
+#ifdef DEBUG
+    Serial.println("updateWarningsSet> warningSet.iat");
+#endif
+  }
+  if (warningSet.clt != preferences.getInt("clt", DEF_WARN_CLT)) {
+    preferences.putInt("clt", warningSet.clt);
+#ifdef DEBUG
+    Serial.println("updateWarningsSet> warningSet.clt");
+#endif
+  }
+  if (warningSet.oilTemp != preferences.getInt("oilT", DEF_WARN_OIL_T)) {
+    preferences.putInt("oilT", warningSet.oilTemp);
+#ifdef DEBUG
+    Serial.println("updateWarningsSet> warningSet.oilTemp");
+#endif
+  }
+  if (warningSet.oilPress != preferences.getInt("oilP", DEF_WARN_OIL_P)) {
+    preferences.putInt("oilP", warningSet.oilPress);
+#ifdef DEBUG
+    Serial.println("updateWarningsSet> warningSet.oilPress");
+#endif
+  }
+  if (warningSet.fuelPress != preferences.getInt("fuelP", DEF_WARN_FUEL_P)) {
+    preferences.putInt("fuelP", warningSet.fuelPress);
+#ifdef DEBUG
+    Serial.println("updateWarningsSet> warningSet.fuelPress");
+#endif
+  }
+  if (warningSet.vBatt != preferences.getFloat("vBatt", DEF_WARN_VBATT)) {
+    preferences.putFloat("vBatt", warningSet.vBatt);
+#ifdef DEBUG
+    Serial.println("updateWarningsSet> warningSet.vBatt");
+#endif
+  }
+  if (warningSet.isTurbo != preferences.getBool("turbo", DEF_IS_TURBO)) {
+    preferences.putBool("turbo", warningSet.isTurbo);
+#ifdef DEBUG
+    Serial.println("updateWarningsSet> warningSet.isTurbo");
+#endif
+  }
+  preferences.end();
+}
+
+void preInitWarnScreen(bool def) {
+#ifdef DEBUG
+  Serial.println("preInitWarnScreen > start");
+#endif
+
+  lv_label_set_text_fmt(ui_rpmWarnVal, "%d0", warningSet.rpm);
+  lv_label_set_text_fmt(ui_iatWarnVal, "%d", warningSet.iat);
+  lv_label_set_text_fmt(ui_cltWarnVal, "%d", warningSet.clt);
+  lv_label_set_text_fmt(ui_oilTWarnVal, "%d", warningSet.oilTemp);
+  lv_label_set_text_fmt(ui_oilPWarnVal, "%.1f", warningSet.oilPress / 100.0);
+  lv_label_set_text_fmt(ui_fuelPWarnVal, "%.1f", warningSet.fuelPress / 100.0);
+  lv_label_set_text_fmt(ui_vBattWarnVal, "%.1f", warningSet.vBatt);
+  if (warningSet.isTurbo) {
+    lv_obj_add_state(ui_turboSwitch, LV_STATE_CHECKED);
+#ifdef DEBUG
+    Serial.println("add_state: turboSwitch 1");
+#endif
+  } else {
+    lv_obj_clear_state(ui_turboSwitch, LV_STATE_CHECKED);
+#ifdef DEBUG
+    Serial.println("add_state: turboSwitch 0");
+#endif
+  }
+}
+
+void setDefaultWarnSet() {
+  preferences.begin("warn", false);
+  preferences.putInt("rpm", DEF_WARN_RPM);
+  preferences.putInt("iat", DEF_WARN_IAT);
+  preferences.putInt("clt", DEF_WARN_CLT);
+  preferences.putInt("oilT", DEF_WARN_OIL_T);
+  preferences.putInt("oilP", DEF_WARN_OIL_P);
+  preferences.putInt("fuelP", DEF_WARN_FUEL_P);
+  preferences.putFloat("vBatt", DEF_WARN_VBATT);
+  preferences.putBool("turbo", DEF_IS_TURBO);
+  preferences.end();
+  preInitWarnScreen(true);
+}
+
+void setTurbo() {
+#ifdef DEBUG
+  Serial.printf("setIsTurbo > start (isTurbo= %d)\n", warningSet.isTurbo);
+#endif
+
+  warningSet.isTurbo = true;
+  changeMapWidget = true;
+
+#ifdef DEBUG
+  Serial.printf("setIsTurbo > end (isTurbo= %d)\n", warningSet.isTurbo);
+#endif
+}
+
+void setNA() {
+#ifdef DEBUG
+  Serial.printf("setIsNaturalA > end (isTurbo= %d)\n", warningSet.isTurbo);
+#endif
+
+  warningSet.isTurbo = false;
+  changeMapWidget = true;
+
+#ifdef DEBUG
+  Serial.printf("setIsNaturalA > end (isTurbo= %d)\n", warningSet.isTurbo);
+#endif
+}
+
+void rpmWarnSet(bool up) {
+  if (up) {
+    if (warningSet.rpm < 800) {
+      warningSet.rpm += 10;
+    }
+  } else {
+    if (warningSet.rpm > 100) {
+      warningSet.rpm -= 10;
+    }
+  }
+  lv_label_set_text_fmt(ui_rpmWarnVal, "%d0", warningSet.rpm);
+}
+
+void cltWarnSet(bool up) {
+  if (up) {
+    if (warningSet.clt < 120) {
+      warningSet.clt += 1;
+    }
+  } else {
+    if (warningSet.clt > 0) {
+      warningSet.clt -= 1;
+    }
+  }
+  lv_label_set_text_fmt(ui_cltWarnVal, "%d", warningSet.clt);
+}
+
+void iatWarnSet(bool up) {
+  if (up) {
+    if (warningSet.iat < 80) {
+      warningSet.iat += 1;
+    }
+  } else {
+    if (warningSet.iat > 0) {
+      warningSet.iat -= 1;
+    }
+  }
+  lv_label_set_text_fmt(ui_iatWarnVal, "%d", warningSet.iat);
+}
+
+void oilTWarnSet(bool up) {
+  if (up) {
+    if (warningSet.oilTemp < 120) {
+      warningSet.oilTemp += 1;
+    }
+  } else {
+    if (warningSet.oilTemp > 0) {
+      warningSet.oilTemp -= 1;
+    }
+  }
+  lv_label_set_text_fmt(ui_oilTWarnVal, "%d", warningSet.oilTemp);
+}
+
+void oilPWarnSet(bool up) {
+  if (up) {
+    if (warningSet.oilPress < 500) {
+      warningSet.oilPress += 10;
+    }
+  } else {
+    if (warningSet.oilPress > 0) {
+      warningSet.oilPress -= 10;
+    }
+  }
+  lv_label_set_text_fmt(ui_oilPWarnVal, "%.1f", warningSet.oilPress / 100.0);
+}
+
+void fuelPWarnSet(bool up) {
+  if (up) {
+    if (warningSet.fuelPress < 500) {
+      warningSet.fuelPress += 10;
+    }
+  } else {
+    if (warningSet.fuelPress > 100) {
+      warningSet.fuelPress -= 10;
+    }
+  }
+  lv_label_set_text_fmt(ui_fuelPWarnVal, "%.1f", warningSet.fuelPress / 100.0);
+}
+
+void vBattWarnSet(bool up) {
+  if (up) {
+    if (warningSet.vBatt < 16) {
+      warningSet.vBatt += 0.1;
+    }
+  } else {
+    if (warningSet.vBatt > 5) {
+      warningSet.vBatt -= 0.1;
+    }
+  }
+  lv_label_set_text_fmt(ui_vBattWarnVal, "%.1f", warningSet.vBatt);
 }

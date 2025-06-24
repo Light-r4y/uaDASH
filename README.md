@@ -9,7 +9,9 @@ The project can work on GUITION JC8048W550C display board and Waveshare ESP32-S3
 
 For change brightness use swipe up/down (only 5inch GUITION JC8048W550C).
 
-Change main/bench screen use swipe left/right.
+Change main/bench/settings screen use swipe left/right.
+
+For save settings after reboot/power cycle need press "Save" button.
 
 Main screen:
 
@@ -18,6 +20,10 @@ Main screen:
 Bench test screen:
 
 ![bench_screen](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/bench_screen.png)
+
+Settings screen:
+
+![bench_screen](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/settings_screen.png)
 
 -------------------------------------------------------------------
 
