@@ -91,10 +91,9 @@ int brightnessVal = 205;
 
 void lcd_panel_start() {
 
-#ifdef JC8048W550C
-  ledcAttach(LCD_PIN_BACKLIGHT, 600, 8);
+  ledcAttach(LCD_PIN_BACKLIGHT, 1000, 8);
   ledcWrite(LCD_PIN_BACKLIGHT, brightnessVal);
-#elif defined(WAVESHARE_S3_LCD7) || defined(WAVESHARE_S3_LCD5)
+#ifdef defined(WAVESHARE_S3_LCD7) || defined(WAVESHARE_S3_LCD5)
   pinMode(4, OUTPUT);
   /* Initialize IO expander */
   ESP_IOExpander_CH422G *expander = new ESP_IOExpander_CH422G(
@@ -138,7 +137,7 @@ void touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
 }
 
 void setBrightness(int val) {
-#ifdef JC8048W550C
+// #ifdef JC8048W550C
   if (val <= 55) {
     brightnessVal = 55;
   } else {
@@ -149,5 +148,5 @@ void setBrightness(int val) {
     }
   }
   ledcWrite(LCD_PIN_BACKLIGHT, brightnessVal);
-#endif
+// #endif
 }

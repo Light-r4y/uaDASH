@@ -5,9 +5,9 @@ rusEFI lowcost CAN-bus dashboard
 
 The device can display engine operating parameters and bench test coils and injectors (under development).
 
-The project can work on GUITION JC8048W550C display board and Waveshare ESP32-S3-Touch-LCD-7 (you can add more =))
+The project can work on GUITION JC8048W550C display board and Waveshare ESP32-S3-Touch-LCD-7 / ESP32-S3-Touch-LCD-5 (you can add more =))
 
-For change brightness use swipe up/down (only 5inch GUITION JC8048W550C).
+For change brightness use swipe up/down on main screen (5inch GUITION JC8048W550C and ESP32-S3-Touch-LCD-7 if solder 1 wire).
 
 Change main/bench/settings screen use swipe left/right.
 
@@ -73,6 +73,15 @@ Required library:
 - ESP32_IO_Expander@1.1.0 (if use Waveshare board)
 
 ![build_settings](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/adruino_settings.jpg)
+
+
+-------------------------------------------------------------------
+
+## How to activate brightness adjust for Waveshare ESP32-S3-Touch-LCD-7
+
+You will need solder wire like in this picture
+
+![brightness](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/upgrade_for_brightness_7.png)
 
 -------------------------------------------------------------------
 ## Hardware assembly example

@@ -78,6 +78,8 @@
 
 #elif defined(WAVESHARE_S3_LCD7)
 
+#define LCD_PIN_BACKLIGHT   GPIO_NUM_6
+
 // resolution
 #define LCD_WIDTH   800U
 #define LCD_HEGHT   480U
@@ -138,6 +140,8 @@
 // WAVESHARE_S3_LCD7 end
 
 #elif defined(WAVESHARE_S3_LCD5)
+
+#define LCD_PIN_BACKLIGHT   GPIO_NUM_6
 
 // resolution
 #define LCD_WIDTH   800U
