@@ -9,9 +9,12 @@
 #ifdef JC8048W550C
 #define CAN_RX_PIN GPIO_NUM_18
 #define CAN_TX_PIN GPIO_NUM_17
-#elif defined(WAVESHARE_S3_LCD7) || defined(WAVESHARE_S3_LCD5)
+#elif defined(WAVESHARE_S3_LCD7)
 #define CAN_RX_PIN GPIO_NUM_19  
 #define CAN_TX_PIN GPIO_NUM_20
+#elif defined(WAVESHARE_S3_LCD5)
+#define CAN_RX_PIN GPIO_NUM_16  
+#define CAN_TX_PIN GPIO_NUM_15
 #else
 #error "Please choose LCD type in config.h"
 #endif

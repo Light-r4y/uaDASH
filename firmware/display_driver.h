@@ -180,9 +180,9 @@
 #define LCD_HSYNC_BACK_PORCH    8
 
 #define LCD_VSYNC_POLARITY      0
-#define LCD_VSYNC_FRONT_PORCH   16
+#define LCD_VSYNC_FRONT_PORCH   8
 #define LCD_VSYNC_PULSE_WIDTH   4
-#define LCD_VSYNC_BACK_PORCH    16
+#define LCD_VSYNC_BACK_PORCH    8
 
 // touch
 #define TOUCH_XMAX  LCD_WIDTH - 1
