@@ -7,7 +7,7 @@ The device can display engine operating parameters and bench test coils and inje
 
 The project can work on GUITION JC8048W550C display board and Waveshare ESP32-S3-Touch-LCD-7 / ESP32-S3-Touch-LCD-5 (you can add more =))
 
-For change brightness use swipe up/down on main screen (5inch GUITION JC8048W550C and ESP32-S3-Touch-LCD-7 if solder 1 wire).
+For change brightness use swipe up/down on main screen (ESP32-S3-Touch-LCD-7 if solder 1 wire, ESP32-S3-Touch-LCD-5 not tested).
 
 Change main/bench/settings screen use swipe left/right.
 
