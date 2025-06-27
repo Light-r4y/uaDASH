@@ -34,7 +34,7 @@ jobs:
       - name: Compile Sketch
         working-directory: firmware
         run: |
-          echo "#define ${{matrix.display}} #endif" >> config.h
+          echo "#define ${{matrix.display}} 1" >> config.h
           echo "#endif" >> config.h
           arduino-cli compile -b esp32:esp32:esp32s3:UploadSpeed=115200,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi --build-property "compiler.cpp.extra_flag=-O2" --build-property "compiler.c.extra_flags=-O2" firmware.ino -e -v 
 
