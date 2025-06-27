@@ -1,21 +1,21 @@
-# dash5_esp32s3
+# uaDASH
 
-rusEFI lowcost CAN-bus dashboard
--------------------------------------------------------------------
+## rusEFI lowcost CAN-bus dashboard
 
-The device can display engine operating parameters and bench test coils and injectors (under development).
+![main_screen](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/main_screen.png)
 
-The project can work on GUITION JC8048W550C display board and Waveshare ESP32-S3-Touch-LCD-7 / ESP32-S3-Touch-LCD-5 (you can add more =))
+The device can display engine operating parameters and bench test coils and injectors.
+
+The project can work on 
+* GUITION JC8048W550C
+* Waveshare ESP32-S3-Touch-LCD-5 800x480
+* Waveshare ESP32-S3-Touch-LCD-7 800x480
 
 For change brightness use swipe up/down on main screen (ESP32-S3-Touch-LCD-7 if solder 1 wire, ESP32-S3-Touch-LCD-5 not tested).
 
 Change main/bench/settings screen use swipe left/right.
 
 For save settings after reboot/power cycle need press "Save" button.
-
-Main screen:
-
-![main_screen](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/main_screen.png)
 
 Bench test screen:
 
@@ -75,68 +75,8 @@ Required library:
 ![build_settings](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/adruino_settings.jpg)
 
 
--------------------------------------------------------------------
+[README-GUITION.md](README-GUITION.md)
 
-## How to activate brightness adjust for Waveshare ESP32-S3-Touch-LCD-7
+[README-ESP32-S3-Touch-LCD-5.md](README-ESP32-S3-Touch-LCD-5.md)
 
-You will need solder wire like in this picture
-
-![brightness](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/upgrade_for_brightness_7.png)
-
--------------------------------------------------------------------
-## Hardware assembly example
--------------------------------------------------------------------
-
-Display devboard: GUITION JC8048W550C
-
-CAN tranceiver: TJA1050
-
-Power module: MP1584
-
-Screw : DIN 912 M3x16
-
-Heat brass insert nut: M3x5x5
-
--------------------------------------------------------------------
-
-Connectors:
-
-Adapter -- ECU wiring (JST XH 2.54 4pin)
-
-GND / 12V / CAN_L / CAN_H
-
--------------------------------------------------------------------
-
-P1 Power
-
-(use 4pin JST1.25 connector near the USB)
-
-Power module MP1584 Vout -- 5V
-
-RX/TX unused
-
-Power module MP1584 GND -- GND
-
--------------------------------------------------------------------
-
-P4 CANbus 
-
-Adapter -- Display devboard (4pin JST1.25)
-
-CAN tranceiver VCC -- 3.3V !!! Note: sometimes not working, use 5V form another place
-
-CAN tranceiver GND -- GND
-
-CAN tranceiver TX -- PIN_17
-
-CAN tranceiver RX -- PIN_18
-
--------------------------------------------------------------------
-
-![assembled1](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/7.png)
-
-
-![assembled2](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/8.png)
-
-
-![assembled3](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/6.jpeg)
+[README-ESP32-S3-Touch-LCD-7.md](README-ESP32-S3-Touch-LCD-7.md)
