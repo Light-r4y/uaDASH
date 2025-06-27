@@ -27,6 +27,7 @@ jobs:
           arduino-cli core install esp32:esp32
 
       - name: Configure
+        working-directory: firmware
         run: |
           echo "#define ${{matrix.display}} 1" >> config.h
           echo "#endif" >> config.h
