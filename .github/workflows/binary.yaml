@@ -30,13 +30,16 @@ jobs:
           arduino-cli lib install LovyanGFX@1.2.0
           arduino-cli lib install ESP32_IO_Expander@1.1.0
           arduino-cli core install esp32:esp32
+      
+      - name: Configure
+        run: |
+          echo "#define ${{matrix.display}} 1" >> config.h
+          echo "#endif" >> config.h
 
       - name: Compile Sketch
         working-directory: firmware
         run: |
-          echo "#define ${{matrix.display}} 1" >> config.h
-          echo "#endif" >> config.h
-          arduino-cli compile -b esp32:esp32:esp32s3:UploadSpeed=115200,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi --build-property "compiler.cpp.extra_flag=-O2" --build-property "compiler.c.extra_flags=-O2" firmware.ino -e -v 
+          arduino-cli compile --build-property "compiler.cpp.extra_flag=-O2" --build-property "compiler.c.extra_flags=-O2" -b esp32:esp32:esp32s3:UploadSpeed=115200,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi firmware.ino -e -v 
 
       - name: Looking at folder
         working-directory: firmware
