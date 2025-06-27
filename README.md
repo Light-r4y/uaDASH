@@ -77,4 +77,6 @@ Required library:
 
 [README-GUITION.md](README-GUITION.md)
 
+[README-ESP32-S3-Touch-LCD-5.md](README-ESP32-S3-Touch-LCD-5.md)
+
 [README-ESP32-S3-Touch-LCD-7.md](README-ESP32-S3-Touch-LCD-7.md)
