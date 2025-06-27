@@ -1,1 +1,1 @@
-arduino-cli upload -b esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi,EventsCore=0 --build-path . -p COMXXX -v
+arduino-cli upload -b esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi,EventsCore=0 --build-path esp32.esp32.esp32s3 -p COMXXX -v
