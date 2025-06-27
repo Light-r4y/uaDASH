@@ -35,6 +35,10 @@ jobs:
           ls -l build
           ls -l build/esp32.esp32.esp32s3
 
+      - name: Adding help into artifact folder
+        run: |
+          cp release/* firmware/build/
+
       - name: Upload .bin
         uses: actions/upload-artifact@v4
         with:
