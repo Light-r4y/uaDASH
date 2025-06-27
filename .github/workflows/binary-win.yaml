@@ -7,6 +7,9 @@ on:
 
 jobs:
   dash-fw-windows:
+    strategy:
+        matrix:
+          display: [ JC8048W550C, WAVESHARE_S3_LCD7, WAVESHARE_S3_LCD5 ]
     runs-on: windows-latest
 
     steps:
