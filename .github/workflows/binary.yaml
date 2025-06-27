@@ -7,10 +7,17 @@ on:
 
 jobs:
   dash-fw-ubuntu:
+    strategy:
+      matrix:
+        display: [ JC8048W550C, WAVESHARE_S3_LCD7, WAVESHARE_S3_LCD5 ]
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: echo
+        run: |
+          echo "::hello ${{ matrix.display }}"
 
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v2
@@ -26,7 +33,7 @@ jobs:
 
       - name: Compile Sketch
         working-directory: firmware
-        run: arduino-cli compile -b esp32:esp32:esp32s3:UploadSpeed=115200,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi firmware.ino -e -v
+        run: arduino-cli compile -b esp32:esp32:esp32s3:UploadSpeed=115200,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi firmware.ino -e -v --build-property "compiler.cpp.extra_flag=-D${{matrix.display}}=TRUE" --build-property "compiler.extra_flag=-D${{matrix.display}}=TRUE"
 
       - name: Looking at folder
         working-directory: firmware
@@ -38,5 +45,6 @@ jobs:
       - name: Upload .bin
         uses: actions/upload-artifact@v4
         with:
+          name: "dash_${{ matrix.display }}"
           path: "firmware/build/*"
 
