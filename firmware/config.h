@@ -8,4 +8,4 @@
 // #define WAVESHARE_S3_LCD5       // Waveshare:ESP32-S3-Touch-LCD-5 800x480
 
 
-// #endif  // HEADER
+#endif  // HEADER
