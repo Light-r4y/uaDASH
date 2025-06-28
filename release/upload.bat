@@ -1,1 +1,3 @@
-arduino-cli upload -b esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi,EventsCore=0 --build-path esp32.esp32.esp32s3 -p COMXXX -v
+@echo off
+.\esptool.exe --chip esp32s3 --baud 115200 --before default_reset --after hard_reset write_flash -z --flash_mode keep --flash_freq keep --flash_size keep 0x0 "./firmware.ino.bootloader.bin" 0x8000 "./firmware.ino.partitions.bin" 0x10000 "./firmware.ino.bin"
+pause
