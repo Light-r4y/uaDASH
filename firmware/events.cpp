@@ -9,7 +9,7 @@ void downBribrightness(lv_event_t *e) {
   setBrightness(brightnessVal - 40);
 }
 
-uint8_t data[] = { 0x66, 0x00, 0x00, 0x00, 0x00 };
+uint8_t data[] = { 0x66, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 void bench(uint8_t subsys, uint8_t index) {
   data[2] = subsys;
@@ -94,6 +94,10 @@ void benchINJ8(lv_event_t *e) {
 }
 
 void StartStop(lv_event_t *e) {
+  uint8_t data[] = { 0x66, 0x00, 0x00, 0x14, 0x00, 0x09 };
+  // 0x77000C 0x66 0x00 0x00 0x14 0x00 0x09 start/stop engine
+  bool ret = can.send(0x77000C, data, sizeof(data), true);
+  lv_label_set_text_fmt(ui_debugStatus, "Engine Start/stop send status: %s", ret ? "OK" : "FAIL");
 }
 
 void benchFuelPump(lv_event_t *e) {
