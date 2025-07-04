@@ -21,6 +21,7 @@ extern "C" {
 #include "ui_mainScreen.h"
 #include "ui_benchScreen.h"
 #include "ui_settingsScreen.h"
+#include "ui_engineConfigScreen.h"
 
 ///////////////////// VARIABLES ////////////////////
 

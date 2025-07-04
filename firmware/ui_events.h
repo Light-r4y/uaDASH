@@ -13,6 +13,7 @@ extern "C" {
 void upBrightness(lv_event_t * e);
 void downBribrightness(lv_event_t * e);
 void preInitSettingsSceen(lv_event_t * e);
+void benchScreenInitSetup(lv_event_t * e);
 void benchIGN1(lv_event_t * e);
 void benchIGN2(lv_event_t * e);
 void benchIGN3(lv_event_t * e);
@@ -51,7 +52,20 @@ void setIsTurbo(lv_event_t * e);
 void setIsNaturalA(lv_event_t * e);
 void saveWarnSet(lv_event_t * e);
 void defaultWarnSet(lv_event_t * e);
-
+void engineSettingScreenInitSettup(lv_event_t * e);
+void engSetSave(lv_event_t * e);
+void setDisp48L(lv_event_t * e);
+void setDisp53L(lv_event_t * e);
+void setDisp57L(lv_event_t * e);
+void setDisp60L(lv_event_t * e);
+void setDisp62L(lv_event_t * e);
+void setDisp70L(lv_event_t * e);
+void setTrig24(lv_event_t * e);
+void setTrig58(lv_event_t * e);
+void setCamS1(lv_event_t * e);
+void setCamS2(lv_event_t * e);
+void setCamS4(lv_event_t * e);
+void clearEngConfiguration(lv_event_t * e);
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

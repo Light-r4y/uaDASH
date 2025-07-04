@@ -184,3 +184,53 @@ void defaultWarnSet(lv_event_t *e) {
 void preInitSettingsSceen(lv_event_t *e) {
   preInitWarnScreen();
 }
+
+void engSetSave(lv_event_t *e) {
+  engSet();
+}
+
+void benchScreenInitSetup(lv_event_t *e) {
+  benchScreenSetup();
+}
+
+void engineSettingScreenInitSettup(lv_event_t *e) {
+  engineSettingScreenSettup();
+}
+
+void clearEngConfiguration(lv_event_t * e){
+  clearEngConf();
+}
+
+void setDisp48L(lv_event_t *e) {
+  setEngDisp(48);
+}
+void setDisp53L(lv_event_t *e) {
+  setEngDisp(53);
+}
+void setDisp57L(lv_event_t *e) {
+  setEngDisp(57);
+}
+void setDisp60L(lv_event_t *e) {
+  setEngDisp(60);
+}
+void setDisp62L(lv_event_t *e) {
+  setEngDisp(62);
+}
+void setDisp70L(lv_event_t *e) {
+  setEngDisp(70);
+}
+void setTrig24(lv_event_t *e) {
+  setEngTrig(24);
+}
+void setTrig58(lv_event_t *e) {
+  setEngTrig(58);
+}
+void setCamS1(lv_event_t *e) {
+  setEngCamS(1);
+}
+void setCamS2(lv_event_t *e) {
+  setEngCamS(2);
+}
+void setCamS4(lv_event_t *e) {
+  setEngCamS(4);
+}

@@ -15,6 +15,8 @@ void TaskCANReceiver(void *pvParameters) {
 
   getWarningsSet();
   changeMapWidget = true;
+  canEngineConfig = false;
+  checkEngineConfig = true;
 
   bool ret;
 #ifdef DEBUG
@@ -38,8 +40,25 @@ void TaskCANReceiver(void *pvParameters) {
   while (1) {
     // // Check if message is received
     if (can.getAlerts()) {
-      // One or more messages received. Handle all.
+// One or more messages received. Handle all.
+#ifdef DEBUG
+      Serial.printf("receive[ id:%#x d:%#x %#x %#x %#x ]\n", id, data[0], data[1], data[2], data[3], data[4]);
+#endif
       while (can.receive(&id, data, &length, &extended)) {
+        if (extended && checkEngineConfig) {
+#ifdef DEBUG
+          Serial.printf("receive ext: %s\n", extended ? "yes" : "no");
+#endif
+          if (id == 0x77000D) {
+            if (data[0] == 0x66) {
+              canEngineConfig = true;
+              checkEngineConfig = false;
+              engineConfig.displacement = data[2];
+              engineConfig.trigger = data[3];
+              engineConfig.camshape = data[4];
+            }
+          }
+        }
         //  ID 0x200
         // SG_ WarningCounter : 0|16@1+ (1,0) [0|0] "" Vector__XXX
         // SG_ LastError : 16|16@1+ (1,0) [0|0] "" Vector__XXX
@@ -538,4 +557,125 @@ void vBattWarnSet(bool up) {
     }
   }
   lv_label_set_text_fmt(ui_vBattWarnVal, "%.1f", warningSet.vBatt);
+}
+
+void benchScreenSetup() {
+  if (canEngineConfig) {
+    lv_obj_clear_flag(ui_EngSetup, LV_OBJ_FLAG_HIDDEN);
+  }
+}
+
+void setCheckBoxDisplacement() {
+  switch (engineConfig.displacement) {
+    case 48:
+      lv_obj_add_state(ui_CheckboxDisp48, LV_STATE_CHECKED);
+      break;
+    case 53:
+      lv_obj_add_state(ui_CheckboxDisp53, LV_STATE_CHECKED);
+      break;
+    case 57:
+      lv_obj_add_state(ui_CheckboxDisp57, LV_STATE_CHECKED);
+      break;
+    case 60:
+      lv_obj_add_state(ui_CheckboxDisp60, LV_STATE_CHECKED);
+      break;
+    case 62:
+      lv_obj_add_state(ui_CheckboxDisp62, LV_STATE_CHECKED);
+      break;
+    case 70:
+      lv_obj_add_state(ui_CheckboxDisp70, LV_STATE_CHECKED);
+      break;
+    default:
+      lv_obj_add_state(ui_CheckboxDisp48, LV_STATE_CHECKED);
+  }
+}
+
+void setCheckBoxTrigger() {
+  switch (engineConfig.trigger) {
+    case 24:
+      lv_obj_add_state(ui_CheckboxTrig24, LV_STATE_CHECKED);
+      break;
+    case 58:
+      lv_obj_add_state(ui_CheckboxTrig58, LV_STATE_CHECKED);
+      break;
+    default:
+      lv_obj_add_state(ui_CheckboxTrig24, LV_STATE_CHECKED);
+  }
+}
+
+void setCheckBoxCamshape() {
+  switch (engineConfig.camshape) {
+    case 1:
+      lv_obj_add_state(ui_CheckboxCamshape1, LV_STATE_CHECKED);
+      break;
+    case 2:
+      lv_obj_add_state(ui_CheckboxCamshape2, LV_STATE_CHECKED);
+      break;
+    case 4:
+      lv_obj_add_state(ui_CheckboxCamshape4, LV_STATE_CHECKED);
+      break;
+    default:
+      lv_obj_add_state(ui_CheckboxCamshape1, LV_STATE_CHECKED);
+  }
+}
+
+void engineSettingScreenSettup() {
+  setCheckBoxDisplacement();
+  setCheckBoxTrigger();
+  setCheckBoxCamshape();
+}
+
+void clearEngConf() {
+  clearCheckBoxDisplacement();
+  clearCheckBoxTrig();
+  clearCheckBoxCamS();
+  checkEngineConfig = true;
+}
+
+void engSet() {
+  uint8_t data[] = { 0x66, 0x00, 0x00, 0x00, 0x00 };
+  // 0x77000E 0x66 0x00 displ trigg camshape  -- setup engine configuraton
+  data[2] = engineConfig.displacement;
+  data[3] = engineConfig.trigger;
+  data[4] = engineConfig.camshape;
+  can.send(0x77000E, data, sizeof(data), true);
+  checkEngineConfig = true;
+}
+
+void clearCheckBoxDisplacement() {
+  lv_obj_clear_state(ui_CheckboxDisp48, LV_STATE_CHECKED);
+  lv_obj_clear_state(ui_CheckboxDisp53, LV_STATE_CHECKED);
+  lv_obj_clear_state(ui_CheckboxDisp57, LV_STATE_CHECKED);
+  lv_obj_clear_state(ui_CheckboxDisp60, LV_STATE_CHECKED);
+  lv_obj_clear_state(ui_CheckboxDisp62, LV_STATE_CHECKED);
+  lv_obj_clear_state(ui_CheckboxDisp70, LV_STATE_CHECKED);
+}
+
+void clearCheckBoxTrig() {
+  lv_obj_clear_state(ui_CheckboxTrig24, LV_STATE_CHECKED);
+  lv_obj_clear_state(ui_CheckboxTrig58, LV_STATE_CHECKED);
+}
+
+void clearCheckBoxCamS() {
+  lv_obj_clear_state(ui_CheckboxCamshape1, LV_STATE_CHECKED);
+  lv_obj_clear_state(ui_CheckboxCamshape2, LV_STATE_CHECKED);
+  lv_obj_clear_state(ui_CheckboxCamshape4, LV_STATE_CHECKED);
+}
+
+void setEngDisp(int engDisp) {
+  clearCheckBoxDisplacement();
+  engineConfig.displacement = engDisp;
+  setCheckBoxDisplacement();
+}
+
+void setEngTrig(int trig) {
+  clearCheckBoxTrig();
+  engineConfig.trigger = trig;
+  setCheckBoxTrigger();
+}
+
+void setEngCamS(int cams) {
+  clearCheckBoxCamS();
+  engineConfig.camshape = cams;
+  setCheckBoxCamshape();
 }
