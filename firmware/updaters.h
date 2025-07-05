@@ -11,6 +11,7 @@
 #define PERIOD_FAST_MS 20
 #define PERIOD_MID_MS 200
 #define PERIOD_SLOW_MS 800
+#define PERIOD_HEARTBEAT_MS 500
 
 
 #define DEF_WARN_RPM 600
@@ -73,6 +74,7 @@ extern "C" {
 #endif
 
   void TaskCANReceiver(void *pvParameters);
+  void TaskHeartbeat(void *pvParameters);
   void fastUpdate();
   void midUpdate();
   void slowUpdate();
@@ -103,6 +105,7 @@ extern "C" {
   void clearCheckBoxDisplacement();
   void clearCheckBoxTrig();
   void clearCheckBoxCamS();
+
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

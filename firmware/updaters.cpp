@@ -3,6 +3,18 @@
 ESP32S3_TWAI can;
 Preferences preferences;
 
+void TaskHeartbeat(void *pvParameters) {
+  uint8_t data[] = { 0x66, 0x00, 0x55, 0xAA, 0x00 };
+  uint8_t countHeartbeat = 0;
+  while (1) {
+    data[4] = countHeartbeat;
+    // 0x77000D 0x66 0x00 0x5500 0xAA count -- heartbeat
+    can.send(0x77000F, data, sizeof(data), true);
+    countHeartbeat++;
+    vTaskDelay(pdMS_TO_TICKS(PERIOD_HEARTBEAT_MS));
+  }
+}
+
 void TaskCANReceiver(void *pvParameters) {
   uint32_t id;
   uint8_t data[8];
@@ -40,10 +52,7 @@ void TaskCANReceiver(void *pvParameters) {
   while (1) {
     // // Check if message is received
     if (can.getAlerts()) {
-// One or more messages received. Handle all.
-#ifdef DEBUG
-      Serial.printf("receive[ id:%#x d:%#x %#x %#x %#x ]\n", id, data[0], data[1], data[2], data[3], data[4]);
-#endif
+      // One or more messages received. Handle all.
       while (can.receive(&id, data, &length, &extended)) {
         if (extended && checkEngineConfig) {
 #ifdef DEBUG
@@ -587,6 +596,7 @@ void setCheckBoxDisplacement() {
       break;
     default:
       lv_obj_add_state(ui_CheckboxDisp48, LV_STATE_CHECKED);
+      engineConfig.displacement = 48;
   }
 }
 
@@ -600,6 +610,7 @@ void setCheckBoxTrigger() {
       break;
     default:
       lv_obj_add_state(ui_CheckboxTrig24, LV_STATE_CHECKED);
+      engineConfig.trigger = 24;
   }
 }
 
@@ -616,6 +627,7 @@ void setCheckBoxCamshape() {
       break;
     default:
       lv_obj_add_state(ui_CheckboxCamshape1, LV_STATE_CHECKED);
+      engineConfig.camshape = 1;
   }
 }
 

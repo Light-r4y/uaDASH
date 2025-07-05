@@ -38,6 +38,7 @@ void setup(void) {
 
   // Crate task get data and updater
   xTaskCreatePinnedToCore(TaskCANReceiver, "TaskCANReceiver", 4 * 1024, NULL, 1, NULL, 0);
+  xTaskCreatePinnedToCore(TaskHeartbeat, "TaskHeartbeat", 1 * 1024, NULL, 1, NULL, 0);
 
   ui_init();
 

@@ -93,7 +93,7 @@ void lcd_panel_start() {
 
   ledcAttach(LCD_PIN_BACKLIGHT, 1000, 8);
   ledcWrite(LCD_PIN_BACKLIGHT, brightnessVal);
-#ifdef defined(WAVESHARE_S3_LCD7) || defined(WAVESHARE_S3_LCD5)
+#if defined(WAVESHARE_S3_LCD7) || defined(WAVESHARE_S3_LCD5)
   pinMode(4, OUTPUT);
   /* Initialize IO expander */
   ESP_IOExpander_CH422G *expander = new ESP_IOExpander_CH422G(

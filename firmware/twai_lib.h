@@ -38,7 +38,7 @@ public:
               gpio_num_t rxPin = (gpio_num_t)CAN_RX_PIN,
               twai_timing_config_t timing = CAN_BAUDRATE,
               twai_mode_t mode = TWAI_MODE,
-              bool useFilter = false,
+              bool useFilter = true,
               uint32_t acceptanceCode = CAN_FILTER_CODE,
               uint32_t acceptanceMask = CAN_FILTER_MASK,
               bool singleFilter = TWAI_FILTER_ONE);
