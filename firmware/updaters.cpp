@@ -30,15 +30,17 @@ void TaskCANReceiver(void *pvParameters) {
   canEngineConfig = false;
   checkEngineConfig = true;
 
-  bool ret;
+  bool ret = false;
 #ifdef DEBUG
   Serial.println("TaskCANReceiver init");
 #endif
 
-  ret = can.init();
+  while (!ret) {
+    ret = can.init();
 #ifdef DEBUG
-  Serial.printf("can.init : %s\n", ret ? "OK" : "FAIL");
+    Serial.printf("can.init : %s\n", ret ? "OK" : "FAIL");
 #endif
+  }
 
   ret = can.alertConfigure();
 #ifdef DEBUG

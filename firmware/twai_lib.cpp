@@ -9,18 +9,19 @@ bool ESP32S3_TWAI::init(gpio_num_t txPin, gpio_num_t rxPin,
 
   // Configure TWAI driver
   twai_general_config_t g_config =
-    TWAI_GENERAL_CONFIG_DEFAULT(txPin, rxPin, mode);
-  // {
-  //     .mode = mode,
-  //     .tx_io = txPin,
-  //     .rx_io = rxPin,
-  //     .clkout_io = TWAI_IO_UNUSED,
-  //     .bus_off_io = TWAI_IO_UNUSED,
-  //     .tx_queue_len = 5,
-  //     .rx_queue_len = 20,
-  //     .alerts_enabled = TWAI_ALERT_NONE,
-  //     .clkout_divider = 0
-  // };
+    // TWAI_GENERAL_CONFIG_DEFAULT(txPin, rxPin, mode);
+  {
+      .controller_id = 0,
+      .mode = mode,
+      .tx_io = txPin,
+      .rx_io = rxPin,
+      .clkout_io = TWAI_IO_UNUSED,
+      .bus_off_io = TWAI_IO_UNUSED,
+      .tx_queue_len = 5,
+      .rx_queue_len = 64,
+      .alerts_enabled = TWAI_ALERT_NONE,
+      .clkout_divider = 0
+  };
 
   twai_filter_config_t f_config;
   if (useFilter) {

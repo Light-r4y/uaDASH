@@ -25,7 +25,7 @@
 #define CAN_FILTER_MASK 0x007FFFFFU << 3
 
 // CAN Interval:
-#define POLLING_RATE_MS 50
+#define POLLING_RATE_MS 20
 
 #define TWAI_MODE       TWAI_MODE_NORMAL
 #define TWAI_FILTER_ONE false
@@ -38,7 +38,7 @@ public:
               gpio_num_t rxPin = (gpio_num_t)CAN_RX_PIN,
               twai_timing_config_t timing = CAN_BAUDRATE,
               twai_mode_t mode = TWAI_MODE,
-              bool useFilter = true,
+              bool useFilter = flase,
               uint32_t acceptanceCode = CAN_FILTER_CODE,
               uint32_t acceptanceMask = CAN_FILTER_MASK,
               bool singleFilter = TWAI_FILTER_ONE);
