@@ -80,3 +80,9 @@ Required library:
 [README-ESP32-S3-Touch-LCD-5.md](README-ESP32-S3-Touch-LCD-5.md)
 
 [README-ESP32-S3-Touch-LCD-7.md](README-ESP32-S3-Touch-LCD-7.md)
+
+## FAQ
+
+# Q: which of three supported screens is best?
+
+A: ESP32-S3-Touch-LCD-5 from Waveshare has both on-board CAN transceiver and on-board 12v power supply, that one you just need to connect to vehicle! 
