@@ -83,6 +83,10 @@ Required library:
 
 ## FAQ
 
-# Q: which of three supported screens is best?
+### Q: which of three supported screens is best?
 
-A: ESP32-S3-Touch-LCD-5 from Waveshare has both on-board CAN transceiver and on-board 12v power supply, that one you just need to connect to vehicle! 
+A: ESP32-S3-Touch-LCD-5 from Waveshare has both on-board CAN transceiver and on-board 12v power supply, that one you just need to connect to vehicle!
+
+### Q: why only 800x480?
+
+A: With limited software developers availability we focus on only one resolution. Sorry no 1024x600.
