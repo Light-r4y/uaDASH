@@ -12,6 +12,7 @@
 *.h text eol=auto
 *.xml text eol=auto
 *.sh text eol=auto
+*.md text eol=auto
 
 # Denote all files that are truly binary and should not be modified.
 *.png binary
