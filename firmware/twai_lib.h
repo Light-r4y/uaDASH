@@ -15,6 +15,9 @@
 #elif defined(WAVESHARE_S3_LCD5)
 #define CAN_RX_PIN GPIO_NUM_16  
 #define CAN_TX_PIN GPIO_NUM_15
+#elif defined(Sunton_S3_LCD7)
+#define CAN_RX_PIN GPIO_NUM_17  
+#define CAN_TX_PIN GPIO_NUM_18
 #else
 #error "Please choose LCD type in config.h"
 #endif

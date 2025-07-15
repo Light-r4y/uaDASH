@@ -9,7 +9,7 @@ jobs:
   dash-fw-ubuntu:
     strategy:
       matrix:
-        display: [ JC8048W550C, WAVESHARE_S3_LCD7, WAVESHARE_S3_LCD5 ]
+        display: [ JC8048W550C, WAVESHARE_S3_LCD7, WAVESHARE_S3_LCD5, Sunton_S3_LCD7 ]
     runs-on: ubuntu-latest
 
     steps:
