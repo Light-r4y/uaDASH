@@ -338,7 +338,7 @@
 #define LV_ATTRIBUTE_MEM_ALIGN
 
 /*Attribute to mark large constant arrays for example font's bitmaps*/
-#define LV_ATTRIBUTE_LARGE_CONST DRAM_ATTR
+#define LV_ATTRIBUTE_LARGE_CONST //DRAM_ATTR
 
 /*Compiler prefix for a big array declaration in RAM*/
 #define LV_ATTRIBUTE_LARGE_RAM_ARRAY EXT_RAM_BSS_ATTR
@@ -347,7 +347,7 @@
 #define LV_ATTRIBUTE_FAST_MEM IRAM_ATTR
 
 /*Prefix variables that are used in GPU accelerated operations, often these need to be placed in RAM sections that are DMA accessible*/
-#define LV_ATTRIBUTE_DMA
+#define LV_ATTRIBUTE_DMA MALLOC_CAP_DMA
 
 /*Export integer constant to binding. This macro is used with constants in the form of LV_<CONST> that
  *should also appear on LVGL binding API such as Micropython.*/

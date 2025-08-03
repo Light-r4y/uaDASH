@@ -69,6 +69,8 @@ lv_obj_t * ui_saveButton = NULL;
 lv_obj_t * ui_Label29 = NULL;
 lv_obj_t * ui_defaultWarnSettingsButton = NULL;
 lv_obj_t * ui_Label30 = NULL;
+lv_obj_t * ui_FWLabel = NULL;
+lv_obj_t * ui_FWValLabel = NULL;
 // event funtions
 void ui_event_settingsScreen(lv_event_t * e)
 {
@@ -253,7 +255,7 @@ void ui_settingsScreen_screen_init(void)
     lv_obj_set_x(ui_labelSettingsScreen, -1);
     lv_obj_set_y(ui_labelSettingsScreen, -219);
     lv_obj_set_align(ui_labelSettingsScreen, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_labelSettingsScreen, "SETTINGS");
+    lv_label_set_text(ui_labelSettingsScreen, "WARNING SETTINGS");
     lv_obj_set_style_text_color(ui_labelSettingsScreen, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_labelSettingsScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_labelSettingsScreen, &ui_font_FontLabel, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -901,6 +903,28 @@ void ui_settingsScreen_screen_init(void)
     lv_obj_set_style_text_opa(ui_Label30, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_Label30, &ui_font_FontLabel, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_FWLabel = lv_label_create(ui_settingsScreen);
+    lv_obj_set_width(ui_FWLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_FWLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_FWLabel, 4);
+    lv_obj_set_y(ui_FWLabel, -1);
+    lv_obj_set_align(ui_FWLabel, LV_ALIGN_BOTTOM_LEFT);
+    lv_label_set_text(ui_FWLabel, "FW:");
+    lv_obj_set_style_text_color(ui_FWLabel, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_FWLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_FWLabel, &ui_font_FontIndicatorLabel, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_FWValLabel = lv_label_create(ui_settingsScreen);
+    lv_obj_set_width(ui_FWValLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_FWValLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_FWValLabel, 35);
+    lv_obj_set_y(ui_FWValLabel, -1);
+    lv_obj_set_align(ui_FWValLabel, LV_ALIGN_BOTTOM_LEFT);
+    lv_label_set_text(ui_FWValLabel, "XXX-xxx");
+    lv_obj_set_style_text_color(ui_FWValLabel, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_FWValLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_FWValLabel, &ui_font_FontIndicatorLabel, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     lv_obj_add_event_cb(ui_rpmWarnButtonPlus, ui_event_rpmWarnButtonPlus, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_rpmWarnButtonMinus, ui_event_rpmWarnButtonMinus, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_cltWarnButtonPlus, ui_event_cltWarnButtonPlus, LV_EVENT_ALL, NULL);
@@ -990,5 +1014,6 @@ void ui_settingsScreen_screen_destroy(void)
     ui_Label29 = NULL;
     ui_defaultWarnSettingsButton = NULL;
     ui_Label30 = NULL;
-
+    ui_FWLabel = NULL;
+    ui_FWValLabel = NULL;
 }

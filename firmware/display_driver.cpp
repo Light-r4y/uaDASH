@@ -57,9 +57,9 @@ LCD_Panel::LCD_Panel(void) {
   {
     auto cfg = _panel_instance.config();
     cfg.memory_width = LCD_WIDTH;   //800;
-    cfg.memory_height = LCD_HEGHT;  //480;
+    cfg.memory_height = LCD_HEIGHT;  //480;
     cfg.panel_width = LCD_WIDTH;    //800;
-    cfg.panel_height = LCD_HEGHT;   //480;
+    cfg.panel_height = LCD_HEIGHT;   //480;
     cfg.offset_x = 0;
     cfg.offset_y = 0;
     _panel_instance.config(cfg);

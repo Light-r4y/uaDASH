@@ -6,6 +6,7 @@
 #include "mutex.h"
 #include <Ticker.h>
 #include <Preferences.h>
+#include "build_info.h"
 
 // Updaters tikers
 #define PERIOD_FAST_MS 20

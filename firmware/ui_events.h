@@ -12,7 +12,7 @@ extern "C" {
 
 void upBrightness(lv_event_t * e);
 void downBribrightness(lv_event_t * e);
-void preInitSettingsSceen(lv_event_t * e);
+void preInitSettingsScreen(lv_event_t * e);
 void benchScreenInitSetup(lv_event_t * e);
 void benchIGN1(lv_event_t * e);
 void benchIGN2(lv_event_t * e);

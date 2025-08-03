@@ -418,7 +418,7 @@ void preInitWarnScreen(bool def) {
 #ifdef DEBUG
   Serial.println("preInitWarnScreen > start");
 #endif
-
+  lv_label_set_text(ui_FWValLabel, DASH_TAG);
   lv_label_set_text_fmt(ui_rpmWarnVal, "%d0", warningSet.rpm);
   lv_label_set_text_fmt(ui_iatWarnVal, "%d", warningSet.iat);
   lv_label_set_text_fmt(ui_cltWarnVal, "%d", warningSet.clt);

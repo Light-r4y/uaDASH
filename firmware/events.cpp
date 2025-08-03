@@ -181,7 +181,7 @@ void defaultWarnSet(lv_event_t *e) {
   setDefaultWarnSet();
 }
 
-void preInitSettingsSceen(lv_event_t *e) {
+void preInitSettingsScreen(lv_event_t *e) {
   preInitWarnScreen();
 }
 

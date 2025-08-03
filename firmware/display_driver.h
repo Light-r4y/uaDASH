@@ -19,7 +19,7 @@
 
 // resolution
 #define LCD_WIDTH   800U
-#define LCD_HEGHT   480U
+#define LCD_HEIGHT   480U
 
 #define LCD_PIN_HENABLE     GPIO_NUM_40
 #define LCD_PIN_VSYNC       GPIO_NUM_41
@@ -64,7 +64,7 @@
 
 // touch
 #define TOUCH_XMAX  LCD_WIDTH - 1
-#define TOUCH_YMAX  LCD_HEGHT - 1
+#define TOUCH_YMAX  LCD_HEIGHT - 1
 
 #define TOUCH_PIN_INT   GPIO_NUM_NC
 #define TOUCH_PIN_RST   GPIO_NUM_38
@@ -82,7 +82,7 @@
 
 // resolution
 #define LCD_WIDTH   800U
-#define LCD_HEGHT   480U
+#define LCD_HEIGHT   480U
 
 #define LCD_PIN_HENABLE     GPIO_NUM_5
 #define LCD_PIN_VSYNC       GPIO_NUM_3
@@ -127,7 +127,7 @@
 
 // touch
 #define TOUCH_XMAX  LCD_WIDTH - 1
-#define TOUCH_YMAX  LCD_HEGHT - 1
+#define TOUCH_YMAX  LCD_HEIGHT - 1
 
 #define TOUCH_PIN_INT   GPIO_NUM_NC
 #define TOUCH_PIN_RST   GPIO_NUM_NC
@@ -145,7 +145,7 @@
 
 // resolution
 #define LCD_WIDTH   800U
-#define LCD_HEGHT   480U
+#define LCD_HEIGHT   480U
 
 #define LCD_PIN_HENABLE     GPIO_NUM_5
 #define LCD_PIN_VSYNC       GPIO_NUM_3
@@ -190,7 +190,7 @@
 
 // touch
 #define TOUCH_XMAX  LCD_WIDTH - 1
-#define TOUCH_YMAX  LCD_HEGHT - 1
+#define TOUCH_YMAX  LCD_HEIGHT - 1
 
 #define TOUCH_PIN_INT   GPIO_NUM_NC
 #define TOUCH_PIN_RST   GPIO_NUM_NC
@@ -208,7 +208,7 @@
 
 // resolution
 #define LCD_WIDTH   800U
-#define LCD_HEGHT   480U
+#define LCD_HEIGHT   480U
 
 #define LCD_PIN_HENABLE     GPIO_NUM_41
 #define LCD_PIN_VSYNC       GPIO_NUM_40
@@ -253,7 +253,7 @@
 
 // touch
 #define TOUCH_XMAX  LCD_WIDTH - 1
-#define TOUCH_YMAX  LCD_HEGHT - 1
+#define TOUCH_YMAX  LCD_HEIGHT - 1
 
 #define TOUCH_PIN_INT   GPIO_NUM_NC
 #define TOUCH_PIN_RST   GPIO_NUM_38

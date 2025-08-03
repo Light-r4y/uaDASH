@@ -92,7 +92,7 @@ void ui_event_mainScreen(lv_event_t* e) {
     lv_indev_wait_release(lv_indev_get_act());
     _ui_screen_change(&ui_settingsScreen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_settingsScreen_screen_init);
     _ui_screen_delete(&ui_mainScreen);
-    preInitSettingsSceen(e);
+    preInitSettingsScreen(e);
   }
 }
 
@@ -802,7 +802,7 @@ void ui_mainScreen_screen_init(void) {
 
   ui_LabelMapMax = lv_label_create(ui_mainScreen);
   lv_obj_set_width(ui_LabelMapMax, 25);
-  lv_obj_set_height(ui_LabelMapMax, 7);
+  lv_obj_set_height(ui_LabelMapMax, LV_SIZE_CONTENT);   //7);
   lv_obj_set_x(ui_LabelMapMax, 87);
   lv_obj_set_y(ui_LabelMapMax, 188);
   lv_obj_set_align(ui_LabelMapMax, LV_ALIGN_CENTER);
@@ -814,7 +814,7 @@ void ui_mainScreen_screen_init(void) {
 
   ui_LabelMapT0 = lv_label_create(ui_mainScreen);
   lv_obj_set_width(ui_LabelMapT0, 20);
-  lv_obj_set_height(ui_LabelMapT0, 7);
+  lv_obj_set_height(ui_LabelMapT0, LV_SIZE_CONTENT);   //7);
   lv_obj_set_x(ui_LabelMapT0, -50);
   lv_obj_set_y(ui_LabelMapT0, 188);
   lv_obj_set_align(ui_LabelMapT0, LV_ALIGN_CENTER);
@@ -827,7 +827,7 @@ void ui_mainScreen_screen_init(void) {
 
   ui_LabelMapMid = lv_label_create(ui_mainScreen);
   lv_obj_set_width(ui_LabelMapMid, 20);
-  lv_obj_set_height(ui_LabelMapMid, 7);
+  lv_obj_set_height(ui_LabelMapMid, LV_SIZE_CONTENT);   //7);
   lv_obj_set_x(ui_LabelMapMid, 1);
   lv_obj_set_y(ui_LabelMapMid, 188);
   lv_obj_set_align(ui_LabelMapMid, LV_ALIGN_CENTER);
@@ -839,7 +839,7 @@ void ui_mainScreen_screen_init(void) {
 
   ui_LabelMapT2 = lv_label_create(ui_mainScreen);
   lv_obj_set_width(ui_LabelMapT2, 20);
-  lv_obj_set_height(ui_LabelMapT2, 7);
+  lv_obj_set_height(ui_LabelMapT2, LV_SIZE_CONTENT);   //7);
   lv_obj_set_x(ui_LabelMapT2, 51);
   lv_obj_set_y(ui_LabelMapT2, 188);
   lv_obj_set_align(ui_LabelMapT2, LV_ALIGN_CENTER);

@@ -95,6 +95,8 @@ extern lv_obj_t * ui_Label29;
 extern void ui_event_defaultWarnSettingsButton(lv_event_t * e);
 extern lv_obj_t * ui_defaultWarnSettingsButton;
 extern lv_obj_t * ui_Label30;
+extern lv_obj_t * ui_FWLabel;
+extern lv_obj_t * ui_FWValLabel;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus
