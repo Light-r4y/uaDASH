@@ -24,6 +24,11 @@ jobs:
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v2
 
+      - name: date into header
+        working-directory: firmware
+        run: |
+          ./current_date.sh
+
       # see also 0-setup.bat
       - name: Install platform
         run: |
