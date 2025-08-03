@@ -8,7 +8,7 @@ void TaskHeartbeat(void *pvParameters) {
   uint8_t countHeartbeat = 0;
   while (1) {
     data[4] = countHeartbeat;
-    // 0x77000D 0x66 0x00 0x5500 0xAA count -- heartbeat
+    // 0x77000F 0x66 0x00 0x55 0xAA count -- heartbeat
     can.send(0x77000F, data, sizeof(data), true);
     countHeartbeat++;
     vTaskDelay(pdMS_TO_TICKS(PERIOD_HEARTBEAT_MS));
@@ -176,7 +176,7 @@ void fastUpdate() {
       // MAP
       if (myData.map != old_myData.map) {
         if (warningSet.isTurbo) {
-          float d_map = myData.map / 100;
+          float d_map = (myData.map / 100) - 1.0;
           if (d_map >= 0) {
             lv_obj_set_style_bg_color(ui_mapBar0, lv_color_hex(0xE0FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
           } else {

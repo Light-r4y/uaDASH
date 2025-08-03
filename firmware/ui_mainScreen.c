@@ -336,9 +336,9 @@ void ui_mainScreen_screen_init(void) {
   lv_obj_set_style_bg_opa(ui_mapBar0, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
   ui_mapVal0 = lv_label_create(ui_mainScreen);
-  lv_obj_set_width(ui_mapVal0, 65);
+  lv_obj_set_width(ui_mapVal0, 75);
   lv_obj_set_height(ui_mapVal0, 16);
-  lv_obj_set_x(ui_mapVal0, 432);
+  lv_obj_set_x(ui_mapVal0, 422);
   lv_obj_set_y(ui_mapVal0, 370);
   lv_label_set_long_mode(ui_mapVal0, LV_LABEL_LONG_CLIP);
   lv_label_set_text(ui_mapVal0, "100");
