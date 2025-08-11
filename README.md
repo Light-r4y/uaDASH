@@ -34,7 +34,7 @@ arduino-cli core update-index
 arduino-cli lib install lvgl@8.4.0
 arduino-cli lib install LovyanGFX@1.2.0
 arduino-cli lib install ESP32_IO_Expander@1.1.0
-arduino-cli core install esp32:esp32
+arduino-cli core install esp32:esp32@3.2.1
 arduino-cli -j16 compile -b esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi,EventsCore=0 --build-property "compiler.cpp.extra_flags=-D<set-you-dislay> -O2" firmware.ino --output-dir ./artifacts -v
 arduino-cli upload -b esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi,EventsCore=0 --build-path ./artifacts -p <you-display-COMport> -v
 ```
@@ -65,6 +65,7 @@ https://espressif.github.io/esptool-js/
 (maybe for best performance compile with -O2/O3 flag)
 
 Required library:
+- ESP32 Core v3.2.1 (new version is not built now)
 
 - LVGL v8 (graphic lib)
 
