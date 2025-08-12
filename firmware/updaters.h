@@ -7,6 +7,7 @@
 #include <Ticker.h>
 #include <Preferences.h>
 #include "build_info.h"
+#include "can_common.h"
 
 // Updaters tikers
 #define PERIOD_FAST_MS 20
