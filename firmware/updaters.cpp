@@ -5,7 +5,7 @@ Preferences preferences;
 
 void TaskHeartbeat(void *pvParameters) {
   // uint8_t data[] = { 0x66, 0x00, 0x55, 0xAA, 0x00 };
-  uint8_t data[] = { bench_test_magic_numbers_e::BENCH_HEADER, 0x00, 0x55, 0xAA, 0x00 };
+  uint8_t data[] = { (uint8_t)bench_test_magic_numbers_e::BENCH_HEADER, 0x00, 0x55, 0xAA, 0x00 };
   uint8_t countHeartbeat = 0;
   while (1) {
     data[4] = countHeartbeat;
@@ -66,7 +66,7 @@ void TaskCANReceiver(void *pvParameters) {
           // if (id == 0x77000D) {
           if (id == (uint32_t)bench_test_packet_ids_e::ECU_CONFIG_BROADCAST) {
             // if (data[0] == 0x66) {
-            if (data[0] == bench_test_magic_numbers_e::BENCH_HEADER) {
+            if (data[0] == (uint8_t)bench_test_magic_numbers_e::BENCH_HEADER) {
               canEngineConfig = true;
               checkEngineConfig = false;
               engineConfig.displacement = data[2];
@@ -653,7 +653,7 @@ void clearEngConf() {
 
 void engSet() {
   // uint8_t data[] = { 0x66, 0x00, 0x00, 0x00, 0x00 };
-  uint8_t data[] = { bench_test_magic_numbers_e::BENCH_HEADER, 0x00, 0x00, 0x00, 0x00 };
+  uint8_t data[] = { (uint8_t)bench_test_magic_numbers_e::BENCH_HEADER, 0x00, 0x00, 0x00, 0x00 };
   // 0x77000E 0x66 0x00 displ trigg camshape  -- setup engine configuraton
   data[2] = engineConfig.displacement;
   data[3] = engineConfig.trigger;
