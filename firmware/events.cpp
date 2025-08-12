@@ -10,7 +10,7 @@ void downBribrightness(lv_event_t *e) {
 }
 
 // uint8_t data[] = { 0x66, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-uint8_t data[] = { bench_test_magic_numbers_e::BENCH_HEADER, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8_t data[] = { (uint8_t)bench_test_magic_numbers_e::BENCH_HEADER, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 void bench(uint8_t subsys, uint8_t index) {
   data[2] = subsys;
@@ -97,7 +97,7 @@ void benchINJ8(lv_event_t *e) {
 
 void StartStop(lv_event_t *e) {
   // uint8_t data[] = { 0x66, 0x00, 0x14, 0x00, 0x09, 0x00 };
-  uint8_t data[] = { bench_test_magic_numbers_e::BENCH_HEADER, 0x00, 0x14, 0x00, 0x09, 0x00 };
+  uint8_t data[] = { (uint8_t)bench_test_magic_numbers_e::BENCH_HEADER, 0x00, 0x14, 0x00, 0x09, 0x00 };
   // 0x77000C 0x66 0x00 0x14 0x00 0x09 0x00 start/stop engine
   // bool ret = can.send(0x77000C, data, sizeof(data), true);
   bool ret = can.send(bench_test_packet_ids_e::ECU_CAN_BUS_USER_CONTROL, data, sizeof(data), true); 
