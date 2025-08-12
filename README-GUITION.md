@@ -34,13 +34,13 @@ P4 CANbus
 
 Adapter -- Display devboard (4pin JST1.25)
 
-CAN transceiver VCC -- 3.3V !!! Note: sometimes not working, use 5V form another place
+CAN transceiver VCC -- ~~3.3V~~ !!! Note: in latest firmware(bench, start/stop, ...) not working, use 5V form another place
 
 CAN transceiver GND -- GND
 
 CAN transceiver TX -- PIN_17
 
-CAN transceiver RX -- PIN_18
+CAN transceiver RX -- PIN_18 (buld resistor divider to 3.3V input or use 3V CAN transceiver)
 
 
 ![assembled1](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/7.png)
