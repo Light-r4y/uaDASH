@@ -11,7 +11,7 @@ void TaskHeartbeat(void *pvParameters) {
     data[4] = countHeartbeat;
     // 0x77000F 0x66 0x00 0x55 0xAA count -- heartbeat
     // can.send(0x77000F, data, sizeof(data), true);
-    can.send(bench_test_packet_ids_e::DASH_ALIVE, data, sizeof(data), true);
+    can.send((uint32_t)bench_test_packet_ids_e::DASH_ALIVE, data, sizeof(data), true);
     
     countHeartbeat++;
     vTaskDelay(pdMS_TO_TICKS(PERIOD_HEARTBEAT_MS));
@@ -64,7 +64,7 @@ void TaskCANReceiver(void *pvParameters) {
           Serial.printf("receive ext: %s\n", extended ? "yes" : "no");
 #endif
           // if (id == 0x77000D) {
-          if (id == bench_test_packet_ids_e::ECU_CONFIG_BROADCAST) {
+          if (id == (uint32_t)bench_test_packet_ids_e::ECU_CONFIG_BROADCAST) {
             // if (data[0] == 0x66) {
             if (data[0] == bench_test_magic_numbers_e::BENCH_HEADER) {
               canEngineConfig = true;
@@ -659,7 +659,7 @@ void engSet() {
   data[3] = engineConfig.trigger;
   data[4] = engineConfig.camshape;
   // can.send(0x77000E, data, sizeof(data), true);
-  can.send(bench_test_packet_ids_e::ECU_CAN_BUS_SETTINGS_CONTROL, data, sizeof(data), true);
+  can.send((uint32_t)bench_test_packet_ids_e::ECU_CAN_BUS_SETTINGS_CONTROL, data, sizeof(data), true);
   checkEngineConfig = true;
 }
 
