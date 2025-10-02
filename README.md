@@ -4,7 +4,7 @@
 
 See https://github.com/Light-r4y/uaDASH/releases for official release which include pre-compiled binaries and flashing utility!
 
-## rusEFI lowcost CAN-bus dashboard
+## rusEFI open source lowcost CAN-bus dashboard
 
 ![main_screen](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/main_screen.png)
 
