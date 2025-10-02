@@ -1,5 +1,7 @@
-There are at least two ways to upload
+The primary way to flash the display module is to simply run the upload.bat file in Windows.
 
-option one - see https://github.com/rusefi/dash5_esp32s3/?tab=readme-ov-file#flash-for-use-esp-web-flasher
+** There are at least two additional upload options.
 
-option two - edit upload.bat with serial port number
+Option one: see https://github.com/rusefi/dash5_esp32s3/?tab=readme-ov-file#flash-for-use-esp-web-flasher
+
+Option two: use the Arduino IDE.
