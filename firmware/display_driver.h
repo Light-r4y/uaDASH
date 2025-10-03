@@ -173,7 +173,7 @@
 #define LCD_PIN_DATA_B4     GPIO_NUM_10
 
 // timing and polarity
-#define LCD_FREQ                15000000U
+#define LCD_FREQ                16000000U
 #define LCD_PCLK_ACTIVE_NEG     1
 #define LCD_DE_IDLE_HIGH        1
 #define LCD_PCLK_IDLE_HIGH      1
@@ -184,7 +184,7 @@
 #define LCD_HSYNC_BACK_PORCH    8
 
 #define LCD_VSYNC_POLARITY      0
-#define LCD_VSYNC_FRONT_PORCH   8
+#define LCD_VSYNC_FRONT_PORCH   12
 #define LCD_VSYNC_PULSE_WIDTH   4
 #define LCD_VSYNC_BACK_PORCH    8
 
