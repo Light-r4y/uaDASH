@@ -6,7 +6,7 @@ See https://github.com/Light-r4y/uaDASH/releases for official release which incl
 
 ## rusEFI open source lowcost CAN-bus dashboard
 
-![main_screen](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/main_screen.png)
+![main_screen](https://github.com/Light-r4y/dash5_esp32s3/blob/tcu_nano/media/main_screen.png)
 
 The device can display engine operating parameters and bench test coils and injectors.
 
@@ -24,10 +24,6 @@ For save settings after reboot/power cycle need press "Save" button.
 Bench test screen:
 
 ![bench_screen](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/bench_screen.png)
-
-Settings screen:
-
-![bench_screen](https://github.com/Light-r4y/dash5_esp32s3/blob/main/media/settings_screen.png)
 
 -------------------------------------------------------------------
 
