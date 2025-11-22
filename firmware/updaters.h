@@ -44,30 +44,11 @@ typedef struct struct_message {
   // bool fan2;
 } struct_message;
 
-typedef struct warning_set {
-  int rpm;
-  int clt;
-  int iat;
-  int oilTemp;
-  int oilPress;
-  int fuelPress;
-  bool isTurbo;
-  float vBatt;
-} warning_set;
-
-typedef struct engine_set {
-  uint8_t displacement;
-  uint8_t trigger;
-  uint8_t camshape;
-} engine_set;
 
 volatile static struct_message myData;
 volatile static struct_message old_myData;
-volatile static warning_set warningSet;
-volatile static engine_set engineConfig;
-volatile static bool changeMapWidget;
-volatile static bool canEngineConfig;
-volatile static bool checkEngineConfig;
+// volatile static warning_set warningSet;
+// volatile static bool changeMapWidget;
 
 extern ESP32S3_TWAI can;
 extern Preferences preferences;
@@ -81,33 +62,7 @@ extern "C" {
   void midUpdate();
   void slowUpdate();
 
-  void getWarningsSet();
-  void updateWarningsSet();
-  void preInitWarnScreen(bool def = false);
-  void setDefaultWarnSet();
-  void setTurbo();
-  void setNA();
-  void rpmWarnSet(bool up);
-  void cltWarnSet(bool up);
-  void iatWarnSet(bool up);
-  void oilTWarnSet(bool up);
-  void oilPWarnSet(bool up);
-  void fuelPWarnSet(bool up);
-  void vBattWarnSet(bool up);
   void benchScreenSetup();
-  void engineSettingScreenSettup();
-  void engSet();
-  void setEngDisp(int engDisp);
-  void setCheckBoxDisplacement();
-  void setCheckBoxTrigger();
-  void setCheckBoxCamshape();
-  void setEngTrig(int trig);
-  void setEngCamS(int cams);
-  void clearEngConf();
-  void clearCheckBoxDisplacement();
-  void clearCheckBoxTrig();
-  void clearCheckBoxCamS();
-
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

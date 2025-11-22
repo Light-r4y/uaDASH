@@ -1,1 +1,1 @@
-#define DASH_TAG "DEV"
+#define DASH_TAG "dev tcu-nano"
