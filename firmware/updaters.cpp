@@ -120,6 +120,10 @@ void TaskCANReceiver(void *pvParameters)
 
           switch (id)
           {
+          case 0x200:
+            myData.gear = data[5];
+            // myData.speed = data[6];
+            break;
           case 0x201:
             myData.rpm = (data[1] << 8 | data[0]);
             // myData.speed = data[6];
@@ -178,45 +182,45 @@ void fastUpdate()
       // MAP
       // if (myData.map != old_myData.map)
       // {
-        // if (warningSet.isTurbo)
-        // {
-        //   float d_map = (myData.map / 100) - 1.0;
-        //   if (d_map >= 0)
-        //   {
-        //     lv_obj_set_style_bg_color(ui_mapBar0, lv_color_hex(0xE0FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        //   }
-        //   else
-        //   {
-        //     lv_obj_set_style_bg_color(ui_mapBar0, lv_color_hex(0x01FF71), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        //   }
-        //   lv_label_set_text_fmt(ui_mapVal0, "%.2f", d_map);
-        // }
-        // else
-        // {
-        //   lv_label_set_text_fmt(ui_mapVal0, "%.0f", myData.map);
-        // }
-        // lv_bar_set_value(ui_mapBar0, myData.map - 100, LV_ANIM_OFF);
-        // old_myData.map = myData.map;
+      // if (warningSet.isTurbo)
+      // {
+      //   float d_map = (myData.map / 100) - 1.0;
+      //   if (d_map >= 0)
+      //   {
+      //     lv_obj_set_style_bg_color(ui_mapBar0, lv_color_hex(0xE0FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+      //   }
+      //   else
+      //   {
+      //     lv_obj_set_style_bg_color(ui_mapBar0, lv_color_hex(0x01FF71), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+      //   }
+      //   lv_label_set_text_fmt(ui_mapVal0, "%.2f", d_map);
+      // }
+      // else
+      // {
+      //   lv_label_set_text_fmt(ui_mapVal0, "%.0f", myData.map);
+      // }
+      // lv_bar_set_value(ui_mapBar0, myData.map - 100, LV_ANIM_OFF);
+      // old_myData.map = myData.map;
       // }
       // AFR
       // if (myData.afr != old_myData.afr)
       // {
-        // int l_bar = myData.afr * 10 - 150;
-        // lv_bar_set_value(ui_afrBar0, l_bar, LV_ANIM_OFF);
-        // lv_label_set_text_fmt(ui_afrVal0, "%0.1f", myData.afr);
+      // int l_bar = myData.afr * 10 - 150;
+      // lv_bar_set_value(ui_afrBar0, l_bar, LV_ANIM_OFF);
+      // lv_label_set_text_fmt(ui_afrVal0, "%0.1f", myData.afr);
 
-        // if ((l_bar > 10) || (l_bar < -25))
-        // {
-        //   lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        // }
-        // else if (l_bar > 0)
-        // {
-        //   lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0x00FFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        // }
-        // else
-        // {
-        //   lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0xE0FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-        // }
+      // if ((l_bar > 10) || (l_bar < -25))
+      // {
+      //   lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+      // }
+      // else if (l_bar > 0)
+      // {
+      //   lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0x00FFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+      // }
+      // else
+      // {
+      //   lv_obj_set_style_bg_color(ui_afrBar0, lv_color_hex(0xE0FF00), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+      // }
       //   old_myData.afr = myData.afr;
       // }
       xSemaphoreGive(uiMutex);
@@ -234,6 +238,23 @@ void midUpdate()
 #endif
     if (xSemaphoreTake(uiMutex, portMAX_DELAY) == pdTRUE)
     {
+      // Gear
+      if (myData.gear != old_myData.gear)
+      {
+        if ((myData.gear < 0) && (myData.gear > 9))
+        {
+          lv_label_set_text(ui_gearVal1, "p");
+        }
+        else if (myData.gear == 0)
+        {
+          lv_label_set_text(ui_gearVal1, "n");
+        }
+        else
+        {
+          lv_label_set_text_fmt(ui_gearVal1, "%d", myData.gear);
+        }
+        old_myData.gear = myData.gear;
+      }
       // VSS
       // if (myData.speed != old_myData.speed)
       // {

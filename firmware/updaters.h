@@ -27,6 +27,7 @@
 
 
 typedef struct struct_message {
+  int gear;
   int rpm;
   int speed;
   int clt;
