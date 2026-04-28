@@ -94,4 +94,9 @@ A: ESP32-S3-Touch-LCD-5 from Waveshare has both on-board CAN transceiver and on-
 
 ### Q: why only 800x480?
 
-A: With limited software developers availability we focus on only one resolution. Sorry no 1024x600.
+A: With limited software developers availability, we focus on only one resolution. Sorry, no 1024x600.
+
+### Q: To edit the dash, is it just a world of manually editing the ui_mainscreen.c?
+
+A: made with https://squareline.io/
+
